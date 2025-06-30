@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
-use App\Models\SubCategory;
 use App\Models\ProductImage;
 use App\Models\Feedback;
 use App\Models\ProductDetail;
@@ -114,76 +113,80 @@ $mainProducts = Product::where('type', 'main')->with('variations', 'product_imag
     {
         $mainProducts = Product::where('type', 'main')->get();
 
-        $SubCategories= SubCategory::all();
+        $Categories= Category::all();
 
-        return view ('dashboard.products.create',['SubCategories'=>$SubCategories ,'mainProducts'=>$mainProducts]);
+        return view ('dashboard.products.create',['Categories'=>$Categories ,'mainProducts'=>$mainProducts]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        // dd($request);
-        $validation = $request->validate([
-            'name' => 'required|string',
-            'small_description' => 'required|string',
-            'description' => 'required',
-            'old_price' => 'nullable|numeric',
-            'price' => 'required|numeric',
-            'quantity' => 'required|integer|min:1',
-            'image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,WEBP,AVIF|max:2048',
-            'subCategory_id' => 'required|exists:sub_categories,id',
-            'weight' => 'nullable|numeric',
-            'ingredients' => 'nullable|string',
-              'type' => 'required|in:main,variation',
+   public function store(Request $request)
+{
+    $validation = $request->validate([
+        'name' => 'required|string',
+        'small_description' => 'required|string',
+        'description' => 'required',
+        'price_after_discount' => 'nullable|numeric',
+        'price' => 'required|numeric',
+        'quantity' => 'required|integer|min:1',
+        'image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,WEBP,AVIF|max:2048',
+        'category_id' => 'required|exists:categories,id',
+        'type' => 'required|in:main,variation',
         'parent_product_id' => 'nullable|exists:products,id',
-            'allergens' => 'nullable|string',
-            'origin_country' => 'nullable|string',
-            'is_organic' => 'nullable|boolean',
-            'is_sugar_free' => 'nullable|boolean',
-            'is_gluten_free' => 'nullable|boolean',
-        ]);
-        $product = Product::create([
-            'name' => $request->input('name'),
-            'small_description' => $request->input('small_description'),
-            'description' => $request->input('description'),
-            'price' => $request->input('price'),
-            'old_price' => $request->input('old_price'),
-            'quantity' => $request->input('quantity'),
-            'subCategory_id' => $request->input('subCategory_id'),
-             'type' => $request->input('type'),
-        'parent_product_id' => $request->input('type') == 'variation' ? $request->input('parent_product_id') : null,
-        ]);
 
+        // Product details fields
+        'brand' => 'nullable|string',
+        'shade' => 'nullable|string',
+        'finish' => 'nullable|in:matte,glossy,satin,shimmer',
+        'skin_type' => 'nullable|in:oily,dry,combination,sensitive',
+        'ingredients' => 'nullable|string',
+        'volume' => 'nullable|string',
+        'usage_instructions' => 'nullable|string',
+    ]);
+
+    // Create the product
+    $product = Product::create([
+        'name' => $request->name,
+        'small_description' => $request->small_description,
+        'description' => $request->description,
+        'price' => $request->price,
+        'price_after_discount' => $request->price_after_discount,
+        'quantity' => $request->quantity,
+        'category_id' => $request->category_id,
+        'type' => $request->type,
+        'parent_product_id' => $request->type === 'variation' ? $request->parent_product_id : null,
+    ]);
+
+    // Save images
+    if ($request->hasFile('image')) {
         $images = [];
-        if ($request->hasFile('image')) {
-            foreach ($request->file('image') as $file) {
-                $filename = uniqid() . '_' . $file->getClientOriginalExtension();
-                $path = public_path('uploads/productImages/');
-                $file->move($path, $filename);
+        foreach ($request->file('image') as $file) {
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/productImages/'), $filename);
 
-                $images[] = [
-                    'image' => 'uploads/productImages/' . $filename,
-                    'product_id' => $product->id,
-                ];
-            }
-            ProductImage::insert($images);
+            $images[] = [
+                'image' => 'uploads/productImages/' . $filename,
+                'product_id' => $product->id,
+            ];
         }
-
-        $product_details = ProductDetail::create([
-            'product_id' => $product->id,
-            'weight' => $request->input('weight'),
-            'ingredients' => $request->input('ingredients'),
-            'allergens' => $request->input('allergens'),
-            'origin_country' => $request->input('origin_country'),
-            'is_organic' => $request->input('is_organic', false),
-            'is_sugar_free' => $request->input('is_sugar_free', false),
-            'is_gluten_free' => $request->input('is_gluten_free', false),
-        ]);
-
-        return to_route('products.index')->with('success', 'Product created successfully');
+        ProductImage::insert($images);
     }
+
+    // Create product_details
+    ProductDetail::create([
+        'product_id' => $product->id,
+        'brand' => $request->brand,
+        'shade' => $request->shade,
+        'finish' => $request->finish,
+        'skin_type' => $request->skin_type,
+        'ingredients' => $request->ingredients,
+        'volume' => $request->volume,
+        'usage_instructions' => $request->usage_instructions,
+    ]);
+
+    return to_route('products.index')->with('success', 'Product created successfully');
+}
 
 
     /**

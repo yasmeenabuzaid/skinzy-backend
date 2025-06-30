@@ -14,10 +14,21 @@ class CategoryController extends Controller
     public function index()
     {
 
-         $categories = Category::all();
+$categories = Category::where('isDelete', false)->get();
 
         return view('dashboard.categories.index' , ['categories'=> $categories]);
     }
+public function softDelete($id)
+{
+    $category = Category::findOrFail($id);
+    $category->isDelete = true;
+    $category->save();
+
+    // Update related products
+    $category->products()->update(['isDelete' => true]);
+
+    return redirect()->back()->with('success', 'Category and related products marked as deleted.');
+}
 
 
 

@@ -1,7 +1,6 @@
-@extends('layouts.user_side_master')
+@extends('layouts.app')
 
 @section('content')
-
 <div class="main-content main-content-login" style="background-color: #f8f9fa; min-height: 90vh; display: flex; justify-content: center; align-items: center;">
     <div class="login-box card"
          style="width: 100%; max-width: 700px; border: 1px solid #ddd; border-radius: 8px; padding: 50px;padding-top:60px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); background-color: #fff;">
@@ -56,5 +55,4 @@
         </form>
     </div>
 </div>
-
 @endsection

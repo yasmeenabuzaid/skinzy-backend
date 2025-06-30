@@ -1,4 +1,4 @@
-@extends('layouts.user_side_master')
+@extends('layouts.app')
 
 @section('content')
 <style>

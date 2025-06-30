@@ -14,21 +14,11 @@ class Category extends Model
 
     protected $guarded  = [];
 
-    public function subCategories()
+   public function products()
     {
-        return $this->hasMany(SubCategory::class);
+        return $this->hasMany(Product::class, 'category_id', 'id');
     }
 
-    protected static function booted()
-  {
-    static::deleting(function ($category) {
-        foreach ($category->subCategories as $subCategory) {
-            $subCategory->delete();
-        }
 
-        if ($category->isForceDeleting()) {
-            $category->subCategories()->forceDelete();
-        }
-    });
-  }
+
 }

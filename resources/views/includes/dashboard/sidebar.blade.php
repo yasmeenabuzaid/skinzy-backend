@@ -4,7 +4,7 @@
     <div class="logo-container">
         <img src="{{asset('assets/img/new_logo2.png')}}" alt="Logo" class="logo-img">
       </div>
-      
+
     <ul class="sidebar-nav" id="sidebar-nav">
 
 
@@ -35,12 +35,7 @@
 
 
 
-      <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('subCategories.index', 'subCategories.create', 'subCategories.edit') ? 'active' : '' }} collapsed" href="{{route('subCategories.index')}}">
-          <i class="bi bi-stack"></i><span>Sub Categories</span></i>
-        </a>
 
-      </li><!-- End Forms Nav -->
 
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('products.index', 'products.create', 'products.edit', 'products.show') ? 'active' : '' }} collapsed" href="{{route('products.index')}}">
@@ -64,7 +59,7 @@
         </a>
       </li><!-- End Contact Page Nav -->
       @endif --}}
-      @if(Auth::user()->role == 'manager')
+      {{-- @if(Auth::user()->role == 'manager')
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('feedback.index', 'feedback.show') ? 'active' : '' }} collapsed" href="{{ route('feedback.index') }}">
             <i class="bi bi-envelope"></i>
@@ -80,7 +75,7 @@
           <span class="ms-1">payments</span>
         </a>
       </li>
-      @endif
+      @endif --}}
 
 
 

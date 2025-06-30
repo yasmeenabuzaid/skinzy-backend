@@ -14,28 +14,31 @@ class Product extends Model
 
     protected $guarded  = [];
 
-    public function subCategory()
+ public function category()
     {
-         return $this->belongsTo(SubCategory::class, 'subCategory_id');
+         return $this->belongsTo(Category::class);
     }
+
 
     public function product_images()
     {
         return $this->hasMany(ProductImage::class);
     }
-    public function feedbacks()
-    {
-        return $this->hasMany(Feedback::class, 'product_id');
-    }
+    // public function feedbacks()
+    // {
+    //     return $this->hasMany(Feedback::class, 'product_id');
+    // }
 
     public function orderDetails()
     {
         return $this->hasMany(OrderDetail::class);
     }
-    public function productDetails()
-    {
-        return $this->hasOne(ProductDetail::class);
-    }
+  // Product.php
+public function details()
+{
+    return $this->hasOne(ProductDetail::class);
+}
+
 
 
 

@@ -1,4 +1,4 @@
-@extends('layouts.user_side_master')
+@extends('layouts.app')
 
 @section('content')
 
@@ -13,15 +13,15 @@
                         </div>
                         <div class="text-404">
                             <h1 class="page-title">
-                                Error 500 
+                                Error 500
                             </h1>
                             <p class="page-content">
                                 We´re sorry but Something went wrong on our end. Please try again later. <br/>
                                 You could return to
                                 <a href="{{ route('home') }}" class="hightlight"> Home page</a>
-                               
+
                             </p>
-                            
+
                         </div>
                     </section>
                 </div>

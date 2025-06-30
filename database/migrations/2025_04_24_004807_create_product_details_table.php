@@ -11,20 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_details', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('product_id')->nullable();
-            $table->float('weight')->nullable();
-            $table->text('ingredients')->nullable();
-            $table->string('allergens')->nullable();
-            $table->string('origin_country')->nullable();
-            $table->boolean('is_organic')->nullable();
-            $table->boolean('is_sugar_free')->nullable();
-            $table->boolean('is_gluten_free')->nullable(); 
-            $table->timestamps();
+     Schema::create('product_details', function (Blueprint $table) {
+    $table->id();
+    $table->unsignedBigInteger('product_id')->nullable();
+    $table->string('brand')->nullable();
+    $table->string('shade')->nullable();
+    $table->enum('finish', ['matte', 'glossy', 'satin', 'shimmer'])->nullable();
+    $table->enum('skin_type', ['oily', 'dry', 'combination', 'sensitive'])->nullable();
+    $table->text('ingredients')->nullable();
+    $table->string('volume')->nullable();
+    $table->text('usage_instructions')->nullable();
 
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-        });
+    $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+      $table->timestamps();
+});
+
+
+
+
     }
 
     /**

@@ -130,39 +130,59 @@
 
                       <hr>
 
-                      <!-- Row for Additional Product Details -->
-                      <div class="col-12 col-md-6">
-                          <label for="weight" class="form-label">Weight</label>
-                          <input type="text" class="form-control" id="weight" placeholder="Weight (in grams)" name="weight"  value="{{$product_details->weight ?? ' '}}"/>
-                      </div>
-                      <div class="col-12 col-md-6">
-                          <label for="ingredients" class="form-label">Ingredients</label>
-                          <textarea class="form-control" id="ingredients" placeholder="Ingredients" name="ingredients">{{$product_details->ingredients ?? ' '}}</textarea>
-                      </div>
+                   <!-- Row for Brand and Shade -->
+<div class="col-12 col-md-6">
+    <label for="brand" class="form-label">Brand</label>
+    <input type="text" class="form-control" id="brand" name="brand" value="{{ $product_details->brand ?? '' }}" />
+</div>
 
-                      <!-- Row for Allergens and Origin Country -->
-                      <div class="col-12 col-md-6">
-                          <label for="allergens" class="form-label">Allergens</label>
-                          <input type="text" class="form-control" id="allergens" placeholder="Allergens" name="allergens" value="{{$product_details->allergens ?? ' '}}"/>
-                      </div>
-                      <div class="col-12 col-md-6">
-                          <label for="origin_country" class="form-label">Origin Country</label>
-                          <input type="text" class="form-control" id="origin_country" placeholder="Origin Country" name="origin_country" value="{{$product_details->origin_country ?? ' '}}"/>
-                      </div>
+<div class="col-12 col-md-6">
+    <label for="shade" class="form-label">Shade</label>
+    <input type="text" class="form-control" id="shade" name="shade" value="{{ $product_details->shade ?? '' }}" />
+</div>
 
-                      <!-- Row for Checkboxes (Is Organic, Sugar Free, Gluten Free) -->
-                      <div class="col-12 col-md-4">
-                          <label for="is_organic" class="form-label">Is Organic?</label>
-                          <input type="checkbox" id="is_organic" name="is_organic" value="1" {{ $product_details->is_organic ?? false ? 'checked' : '' }} />
-                                                </div>
-                      <div class="col-12 col-md-4">
-                          <label for="is_sugar_free" class="form-label">Is Sugar Free?</label>
-                          <input type="checkbox" id="is_sugar_free" name="is_sugar_free" value="1" {{ $product_details->is_sugar_free ?? false ? 'checked' : '' }} />
-                      </div>
-                      <div class="col-12 col-md-4">
-                          <label for="is_gluten_free" class="form-label">Is Gluten Free?</label>
-                          <input type="checkbox" id="is_gluten_free" name="is_gluten_free" value="1" {{ $product_details->is_gluten_free ?? false ? 'checked' : '' }} />
-                      </div>
+<!-- Row for Finish and Skin Type -->
+<div class="col-12 col-md-6">
+    <label for="finish" class="form-label">Finish</label>
+    <select class="form-control" id="finish" name="finish">
+        <option value="">-- Select Finish --</option>
+        @foreach(['matte', 'glossy', 'satin', 'shimmer'] as $option)
+            <option value="{{ $option }}" {{ ($product_details->finish ?? '') === $option ? 'selected' : '' }}>
+                {{ ucfirst($option) }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+<div class="col-12 col-md-6">
+    <label for="skin_type" class="form-label">Skin Type</label>
+    <select class="form-control" id="skin_type" name="skin_type">
+        <option value="">-- Select Skin Type --</option>
+        @foreach(['oily', 'dry', 'combination', 'sensitive'] as $type)
+            <option value="{{ $type }}" {{ ($product_details->skin_type ?? '') === $type ? 'selected' : '' }}>
+                {{ ucfirst($type) }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+<!-- Row for Expiration Date and Volume -->
+<div class="col-12 col-md-6">
+    <label for="expiration_date" class="form-label">Expiration Date</label>
+    <input type="date" class="form-control" id="expiration_date" name="expiration_date" value="{{ $product_details->expiration_date ?? '' }}" />
+</div>
+
+<div class="col-12 col-md-6">
+    <label for="volume" class="form-label">Volume</label>
+    <input type="text" class="form-control" id="volume" name="volume" value="{{ $product_details->volume ?? '' }}" placeholder="e.g., 50ml" />
+</div>
+
+<!-- Row for Usage Instructions -->
+<div class="col-12">
+    <label for="usage_instructions" class="form-label">Usage Instructions</label>
+    <textarea class="form-control" id="usage_instructions" name="usage_instructions">{{ $product_details->usage_instructions ?? '' }}</textarea>
+</div>
+
 
                       <div class="text-end">
                       <button type="button" id="editButton"  class="btn btn-info">Edit</button>

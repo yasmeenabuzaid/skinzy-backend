@@ -1,0 +1,20 @@
+# تفعيل كاش التهيئة (config cache)
+php artisan config:cache
+
+# مسح كاش التهيئة
+php artisan config:clear
+
+# تفعيل كاش الروت (route cache)
+php artisan route:cache
+
+# مسح كاش الروت
+php artisan route:clear
+
+# تفعيل كاش الفيوز (view cache)
+php artisan view:cache
+
+# مسح كاش الفيوز
+php artisan view:clear
+
+# مسح كل الكاش (cache clear)
+php artisan cache:clear

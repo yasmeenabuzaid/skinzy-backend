@@ -101,14 +101,21 @@
                             <i class="bi bi-pencil"></i> Edit
                         </button>
                           </a>
+<form action="{{ route('categories.softDelete', $category->id) }}" method="POST" style="display:inline;">
+    @csrf
+    @method('PUT')
+    <button type="submit" class="btn btn-outline-warning btn-sm" title="Mark as Deleted">
+        <i class="bi bi-x-circle"></i> Mark Deleted
+    </button>
+</form>
 
-                          <form action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display:inline;" title="Delete">
+                          {{-- <form action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display:inline;" title="Delete">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-outline-danger btn-sm"  onclick="confirmDeletion(event, '{{ route('categories.destroy', $category->id) }}')">
                                                     <i class="bi bi-trash"></i> Delete
                                                 </button>
-                                            </form>
+                                            </form> --}}
 
                         </td>
                         </tr>

@@ -1,4 +1,4 @@
-@extends('layouts.user_side_master')
+@extends('layouts.app')
 
 @section('content')
 
@@ -7,7 +7,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 80vh; 
+        min-height: 80vh;
         flex-direction: column;
         text-align: center;
     }
