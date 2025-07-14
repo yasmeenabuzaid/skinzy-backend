@@ -20,7 +20,7 @@ class Product extends Model
     }
 
 
-    public function product_images()
+    public function images()
     {
         return $this->hasMany(ProductImage::class);
     }
@@ -34,10 +34,10 @@ class Product extends Model
         return $this->hasMany(OrderDetail::class);
     }
   // Product.php
-public function details()
-{
-    return $this->hasOne(ProductDetail::class);
-}
+ public function details()
+    {
+        return $this->hasOne(ProductDetail::class, 'product_id');
+    }
 
 
 

@@ -14,6 +14,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\WebhookController;
 
 
@@ -58,6 +59,7 @@ Route::middleware(['auth', 'manager'])->group(function () {
 
     // <!--==========================================  (Categories)  =================================================================================================================-->
     Route::resource('categories', CategoryController::class);
+    Route::resource('brands', BrandController::class);
 Route::put('/categories/soft-delete/{id}', [CategoryController::class, 'softDelete'])->name('categories.softDelete');
 
     // <!--==========================================  (Sub Categories)  =================================================================================================================-->

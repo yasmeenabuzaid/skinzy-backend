@@ -32,6 +32,12 @@
         </a>
 
       </li><!-- End Components Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('brands.index', 'brands.create', 'brands.edit') ? 'active' : '' }} collapsed " href="{{route('brands.index')}}">
+          <i class="bi bi-grid"></i><span>Brands</span></i>
+        </a>
+
+      </li><!-- End Components Nav -->
 
 
 

@@ -18,3 +18,8 @@ php artisan view:clear
 
 # مسح كل الكاش (cache clear)
 php artisan cache:clear
+
+
+
+
+php artisan storage:link
