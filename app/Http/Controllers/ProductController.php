@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\SubCategory;
 use App\Models\ProductImage;
 use App\Models\Feedback;
 use App\Models\ProductDetail;
@@ -31,8 +32,8 @@ class ProductController extends Controller
     public function index(Request $request)
     {
 
-       $products = Product::with('product_images')->get();
-$mainProducts = Product::where('type', 'main')->with('variations', 'product_images')->get();
+       $products = Product::with('images')->get();
+$mainProducts = Product::where('type', 'main')->with('variations', 'images')->get();
 
        return view('dashboard.products.index' , ['products'=> $products , 'mainProducts'=>$mainProducts]);
     }
@@ -41,7 +42,7 @@ $mainProducts = Product::where('type', 'main')->with('variations', 'product_imag
 {
     $categories = Category::all();
 
-    $products = Product::with('product_images')
+    $products = Product::with('images')
         ->where('quantity', '>', 0)
         ->get();
 
@@ -113,9 +114,9 @@ $mainProducts = Product::where('type', 'main')->with('variations', 'product_imag
     {
         $mainProducts = Product::where('type', 'main')->get();
 
-        $Categories= Category::all();
+        $SubCategories= SubCategory::all();
 
-        return view ('dashboard.products.create',['Categories'=>$Categories ,'mainProducts'=>$mainProducts]);
+        return view ('dashboard.products.create',['SubCategories'=>$SubCategories ,'mainProducts'=>$mainProducts]);
     }
 
     /**
@@ -131,7 +132,7 @@ $mainProducts = Product::where('type', 'main')->with('variations', 'product_imag
         'price' => 'required|numeric',
         'quantity' => 'required|integer|min:1',
         'image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,WEBP,AVIF|max:2048',
-        'category_id' => 'required|exists:categories,id',
+        'sub_category_id' => 'required|exists:categories,id',
         'type' => 'required|in:main,variation',
         'parent_product_id' => 'nullable|exists:products,id',
 
@@ -153,7 +154,7 @@ $mainProducts = Product::where('type', 'main')->with('variations', 'product_imag
         'price' => $request->price,
         'price_after_discount' => $request->price_after_discount,
         'quantity' => $request->quantity,
-        'category_id' => $request->category_id,
+        'sub_category_id' => $request->sub_category_id,
         'type' => $request->type,
         'parent_product_id' => $request->type === 'variation' ? $request->parent_product_id : null,
     ]);

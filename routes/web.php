@@ -59,6 +59,7 @@ Route::middleware(['auth', 'manager'])->group(function () {
 
     // <!--==========================================  (Categories)  =================================================================================================================-->
     Route::resource('categories', CategoryController::class);
+    Route::resource('subCategories', SubCategoryController::class);
     Route::resource('brands', BrandController::class);
 Route::put('/categories/soft-delete/{id}', [CategoryController::class, 'softDelete'])->name('categories.softDelete');
 

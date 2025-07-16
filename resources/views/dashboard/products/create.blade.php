@@ -77,11 +77,11 @@
           </div>
 
           <div class="col-md-6">
-            <label for="category_id" class="form-label">Category</label>
-            <select name="category_id" class="form-control">
-              @foreach ($Categories as $category)
-              <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                {{ $category->name }}
+            <label for="sub_category_id" class="form-label">Category</label>
+            <select name="sub_category_id" class="form-control">
+              @foreach ($SubCategories as $SubCategory)
+              <option value="{{ $SubCategory->id }}" {{ old('sub_category_id') == $SubCategory->id ? 'selected' : '' }}>
+                {{ $SubCategory->name }}
               </option>
               @endforeach
             </select>

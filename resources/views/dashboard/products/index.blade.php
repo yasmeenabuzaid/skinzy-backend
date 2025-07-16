@@ -51,8 +51,8 @@
 <strong>category:</strong> {{ $mainProduct->category->name ?? 'N/A' }}
                         </p>
 
-                        @if($mainProduct->product_images->isNotEmpty())
-                            <img src="{{ asset($mainProduct->product_images[0]->image) }}" alt="{{ $mainProduct->name }}"
+                        @if($mainProduct->images->isNotEmpty())
+                            <img src="{{ asset($mainProduct->images[0]->image) }}" alt="{{ $mainProduct->name }}"
                                  class="img-fluid mb-3 mx-auto d-block" style="max-height: 160px; object-fit: contain; border-radius: 8px;">
                         @endif
 
