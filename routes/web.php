@@ -129,9 +129,8 @@ Route::post('/feedback/store', [FeedbackController::class, 'store'])->name('feed
 
 // Payment Routes
 Route::get('/pay', [PaymentController::class, 'index']);
-Route::get('/pay/{id}', [PaymentController::class, 'showForm'])->name('pay.form');
-Route::post('/pay', [PaymentController::class, 'processPayment'])->name('process.payment');
+Route::post('/payment-proofs/{payment_proof}/review', [PaymentController::class, 'review'])->name('payment-proofs.review');
 
 // Webhook for Square
 Route::post('/webhooks/square', [WebhookController::class, 'handle']);
-Route::post('/square/webhook', [PaymentController::class, 'handleWebhook']); // It seems you have two webhooks, ensure they are correct
+Route::post('/square/webhook', [PaymentController::class, 'handleWebhook']);

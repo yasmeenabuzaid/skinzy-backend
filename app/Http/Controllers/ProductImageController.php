@@ -4,70 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ProductImageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+public function destroy(ProductImage $productImage)
+{
+    $productId = $productImage->product_id;
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    $url = $productImage->url;
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(ProductImage $productImage)
-    {
-        //
-    }
+    $parsedUrl = parse_url($url, PHP_URL_PATH);
+    $pathParts = explode('/', $parsedUrl);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(ProductImage $productImage)
-    {
-        //
-    }
+    $filenameWithExtension = end($pathParts);
+    $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, ProductImage $productImage)
-    {
-        //
-    }
+    $publicId = 'your_folder/' . $filename;
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(ProductImage $productImage)
-    {
-        $productId = $productImage->product_id; 
-        
-       
-    
-        $productImage->delete();
-    
-       
-        return redirect()->route('products.edit', ['product' => $productId])
-            ->with('success', 'Product image deleted successfully.');
-    }
+    Cloudinary::destroy($publicId);
+
+    $productImage->delete();
+
+    return redirect()->route('products.edit', ['product' => $productId])
+        ->with('success', 'Product image deleted successfully.');
+}
+
 }

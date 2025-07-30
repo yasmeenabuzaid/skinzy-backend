@@ -70,11 +70,12 @@
                   </a>
                 </td>
                 <td>
-                  @if($brand->image)
-                    <img src="{{ asset('uploads/brand/' . $brand->image) }}" alt="Brand Image" style="width: 50px; height: 40px;">
-                  @else
-                    <span> - </span>
-                  @endif
+@if($brand->image)
+  <img src="{{ $brand->image }}" alt="Brand Image" style="width: 50px; height: 40px;">
+@else
+  <span> - </span>
+@endif
+
                 </td>
                 <td>
                   <a href="{{ route('brands.edit', $brand->id) }}" title="Edit">

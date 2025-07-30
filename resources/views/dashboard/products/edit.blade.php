@@ -89,16 +89,17 @@
                         <textarea class="form-control" id="description" placeholder="Description" name="description" required>{{ $product->description }}</textarea>
                       </div>
 
-                      <div class="col-12">
-                        <label for="exampleInputName1" class="form-label">Old price</label>
-                        <input type="text" class="form-control" id="old_price" placeholder="Old price" name="old_price" value="{{$product->old_price}}">
-                      </div>
+                        <div class="col-md-6">
+            <label for="price" class="form-label">Current Price</label>
+            <input type="text" name="price" class="form-control" value="{{ $product->price }}" required>
+            <small class="text-muted">Price after discount if applicable</small>
+          </div>
 
+          <div class="col-md-6">
+            <label for="price_after_discount" class="form-label">price after discount </label>
+            <input type="text" name="price_after_discount" class="form-control" value="{{ $product->price_after_discount }}">
+          </div>
 
-                      <div class="col-12">
-                        <label for="exampleInputName1" class="form-label">Price with discount</label>
-                        <input type="text" class="form-control" id="price" placeholder="Price" name="price" value="{{$product->price}}" required>
-                      </div>
 
 
 
@@ -110,16 +111,20 @@
 
 
 
-                      <div class="col-12">
-                        <label for="exampleSelectGender" class="form-label">categoty-sub category</label>
-                        <select  class="form-control form-control-sm" id="subCategory_id" name="subCategory_id">
-                            @foreach ($SubCategories as $SubCategory)
-                            <option @selected($SubCategory->id == $product->subCategory_id) value="{{$SubCategory->id}}">{{ $SubCategory->category->name ?? 'No Category' }} - {{$SubCategory->name}}</option>
-                            @endforeach
+<div class="col-12">
+    <label for="sub_category_id" class="form-label">Category - Sub Category</label>
+    <select class="form-control form-control-sm" id="sub_category_id" name="sub_category_id">
+        <option value="">-- Select Sub Category --</option>
+        @foreach ($subCategories as $subCategory)
+            <option value="{{ $subCategory->id }}"
+                {{ old('sub_category_id', $product->sub_category_id) == $subCategory->id ? 'selected' : '' }}>
+                {{ $subCategory->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
 
 
-                        </select>
-                      </div>
                       <br>
                       <!-- Note -->
                       <div class="col-12">
@@ -167,10 +172,10 @@
 </div>
 
 <!-- Row for Expiration Date and Volume -->
-<div class="col-12 col-md-6">
+{{-- <div class="col-12 col-md-6">
     <label for="expiration_date" class="form-label">Expiration Date</label>
     <input type="date" class="form-control" id="expiration_date" name="expiration_date" value="{{ $product_details->expiration_date ?? '' }}" />
-</div>
+</div> --}}
 
 <div class="col-12 col-md-6">
     <label for="volume" class="form-label">Volume</label>

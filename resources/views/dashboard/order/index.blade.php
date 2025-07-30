@@ -17,7 +17,6 @@
                         </ol>
                     </nav>
                 </div>
-          
                     @if (session('error'))
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <i class="bi bi-exclamation-octagon me-1"></i>
@@ -50,7 +49,7 @@
                                                     <th>#</th>
                                                     <th>User Name</th>
                                                     <th>Mobile</th>
-                                                    <th>Total Price</th>
+                                                    <th>final Price</th>
                                                     <th>Order Status</th>
                                                     <th>Shipping Method</th>
                                                     <th>Date</th>
@@ -78,7 +77,7 @@
 
                                                             <td>{{ $order->mobile }}</td>
 
-                                                            <td>{{ $order->total_price }} JOD</td>
+                                                            <td>{{ $order->final_price }} JOD</td>
 
                                                             <td>
                                                                 <span

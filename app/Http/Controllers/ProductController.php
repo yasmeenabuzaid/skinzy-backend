@@ -9,6 +9,7 @@ use App\Models\ProductImage;
 use App\Models\Feedback;
 use App\Models\ProductDetail;
 use Illuminate\Http\Request;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ProductController extends Controller
 {
@@ -29,14 +30,22 @@ class ProductController extends Controller
 //     ]);
 // }
 
-    public function index(Request $request)
-    {
+public function index(Request $request)
+{
+    $products = Product::with(['images', 'subCategory'])->get();
 
-       $products = Product::with('images')->get();
-$mainProducts = Product::where('type', 'main')->with('variations', 'images')->get();
+    $mainProducts = Product::where('type', 'main')
+        ->with(['variations', 'images', 'subCategory'])
+        ->get();
 
-       return view('dashboard.products.index' , ['products'=> $products , 'mainProducts'=>$mainProducts]);
-    }
+    return view('dashboard.products.index', [
+        'products'     => $products,
+        'mainProducts' => $mainProducts,
+    ]);
+}
+
+
+
 
     public function shop(Request $request)
 {
@@ -122,7 +131,7 @@ $mainProducts = Product::where('type', 'main')->with('variations', 'images')->ge
     /**
      * Store a newly created resource in storage.
      */
-   public function store(Request $request)
+ public function store(Request $request)
 {
     $validation = $request->validate([
         'name' => 'required|string',
@@ -136,7 +145,6 @@ $mainProducts = Product::where('type', 'main')->with('variations', 'images')->ge
         'type' => 'required|in:main,variation',
         'parent_product_id' => 'nullable|exists:products,id',
 
-        // Product details fields
         'brand' => 'nullable|string',
         'shade' => 'nullable|string',
         'finish' => 'nullable|in:matte,glossy,satin,shimmer',
@@ -146,7 +154,6 @@ $mainProducts = Product::where('type', 'main')->with('variations', 'images')->ge
         'usage_instructions' => 'nullable|string',
     ]);
 
-    // Create the product
     $product = Product::create([
         'name' => $request->name,
         'small_description' => $request->small_description,
@@ -159,22 +166,27 @@ $mainProducts = Product::where('type', 'main')->with('variations', 'images')->ge
         'parent_product_id' => $request->type === 'variation' ? $request->parent_product_id : null,
     ]);
 
-    // Save images
     if ($request->hasFile('image')) {
         $images = [];
         foreach ($request->file('image') as $file) {
-            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/productImages/'), $filename);
+            try {
+                $uploadResult = Cloudinary::upload($file->getRealPath());
+                if (!$uploadResult) {
+                    return back()->with('error', 'Failed to upload image.');
+                }
+                $imageUrl = $uploadResult->getSecurePath();
 
-            $images[] = [
-                'image' => 'uploads/productImages/' . $filename,
-                'product_id' => $product->id,
-            ];
+                $images[] = [
+                    'image' => $imageUrl,
+                    'product_id' => $product->id,
+                ];
+            } catch (\Exception $e) {
+                return back()->with('error', 'Image upload error: ' . $e->getMessage());
+            }
         }
         ProductImage::insert($images);
     }
 
-    // Create product_details
     ProductDetail::create([
         'product_id' => $product->id,
         'brand' => $request->brand,
@@ -189,13 +201,12 @@ $mainProducts = Product::where('type', 'main')->with('variations', 'images')->ge
     return to_route('products.index')->with('success', 'Product created successfully');
 }
 
-
     /**
      * Display the specified resource.
      */
     public function show(Product $product)
     {
-        $productImages = $product->product_images;
+        $productImages = $product->images;
 
         $product_details = ProductDetail::where('product_id', $product->id)->first();
 
@@ -278,14 +289,16 @@ if ($product->type == 'main') {
     public function edit(Product $product)
     {
         $product_details = ProductDetail::where('product_id', $product->id)->first();
-        $SubCategories= SubCategory::all();
-        $productImages = $product->product_images;
-        return view ('dashboard.products.edit',[
-            'product'=>$product ,
-            'SubCategories'=>$SubCategories,
-            'productImages'=>$productImages,
-            'product_details'=>$product_details
-        ]);
+        $productImages = $product->images;
+       $subCategories = SubCategory::all();
+
+return view('dashboard.products.edit', [
+    'product'         => $product,
+    'subCategories'   => $subCategories,
+    'productImages'   => $productImages,
+    'product_details' => $product_details
+]);
+
     }
 
     /**
@@ -297,18 +310,18 @@ if ($product->type == 'main') {
             'name' => 'required|string',
             'small_description' => 'required|string',
             'description' => 'required',
-            'old_price' => 'nullable|numeric',
-            'price' => 'required|numeric',
+             'price_after_discount' => 'nullable|numeric',
+        'price' => 'required|numeric',
             'quantity' => 'required|integer|min:1',
             'image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,WEBP,AVIF|max:2048',
-            'subCategory_id' => 'required|exists:sub_categories,id',
-            'weight' => 'nullable|numeric',
-            'ingredients' => 'nullable|string',
-            'allergens' => 'nullable|string',
-            'origin_country' => 'nullable|string',
-            'is_organic' => 'nullable|boolean',
-            'is_sugar_free' => 'nullable|boolean',
-            'is_gluten_free' => 'nullable|boolean',
+        'sub_category_id' => 'required|exists:categories,id',
+        'brand' => 'nullable|string',
+        'shade' => 'nullable|string',
+        'finish' => 'nullable|in:matte,glossy,satin,shimmer',
+        'skin_type' => 'nullable|in:oily,dry,combination,sensitive',
+        'ingredients' => 'nullable|string',
+        'volume' => 'nullable|string',
+        'usage_instructions' => 'nullable|string',
         ]);
 
 
@@ -317,10 +330,10 @@ if ($product->type == 'main') {
             'name'=>$request->input('name'),
             'small_description'=>$request->input('small_description'),
             'description'=>$request->input('description'),
-            'old_price'=>$request->input('old_price'),
             'price'=>$request->input('price'),
+            'price_after_discount'=>$request->input('price_after_discount'),
             'quantity'=>$request->input('quantity'),
-            'subCategory_id'=>$request->input('subCategory_id'),
+            'sub_category_id'=>$request->input('sub_category_id'),
         ]);
 
         $images = [];
@@ -343,18 +356,19 @@ if ($product->type == 'main') {
             ProductImage::insert($images);
         }
 
-        ProductDetail::updateOrCreate(
-            ['product_id' => $product->id],
-            [
-                'weight' => $request->input('weight'),
-                'ingredients' => $request->input('ingredients'),
-                'allergens' => $request->input('allergens'),
-                'origin_country' => $request->input('origin_country'),
-                'is_organic' => $request->has('is_organic'),
-                'is_sugar_free' => $request->has('is_sugar_free'),
-                'is_gluten_free' => $request->has('is_gluten_free'),
-            ]
-        );
+       ProductDetail::updateOrCreate(
+    ['product_id' => $product->id],
+    [
+        'brand' => $request->input('brand'),
+        'shade' => $request->input('shade'),
+        'finish' => $request->input('finish'),
+        'skin_type' => $request->input('skin_type'),
+        'ingredients' => $request->input('ingredients'),
+        'volume' => $request->input('volume'),
+        'usage_instructions' => $request->input('usage_instructions'),
+    ]
+);
+
 
 
         return to_route('products.index')->with('success', 'Product updated successfully');

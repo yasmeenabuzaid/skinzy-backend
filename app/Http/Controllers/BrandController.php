@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+    use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class BrandController extends Controller
 {
@@ -40,28 +42,30 @@ class BrandController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $validation = $request->validate([
-            'name' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
 
-        $filename = null;
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $path = public_path('uploads/brand/');
-            $file->move($path, $filename);
-        }
+public function store(Request $request)
+{
+    $validation = $request->validate([
+        'name' => 'required|string',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
 
-        Brand::create([
-            'name' => $request->input('name'),
-            'image' => $filename,
-        ]);
+    $imageUrl = null;
+    if ($request->hasFile('image')) {
+        $file = $request->file('image');
 
-        return to_route('brands.index')->with('success', 'Brand created successfully');
+        $uploadResult = Cloudinary::upload($file->getRealPath());
+
+        $imageUrl = $uploadResult->getSecurePath();
     }
+
+    Brand::create([
+        'name' => $request->input('name'),
+        'image' => $imageUrl,
+    ]);
+
+    return to_route('brands.index')->with('success', 'Brand created successfully');
+}
 
     /**
      * Show the form for editing the specified resource.
@@ -103,15 +107,7 @@ class BrandController extends Controller
      */
     public function destroy(Brand $brand)
     {
-        $hasOrders = $brand->subCategories()
-            ->whereHas('products', function ($query) {
-                $query->whereHas('orderDetails');
-            })
-            ->exists();
 
-        if ($hasOrders) {
-            return redirect()->back()->with('error', 'Cannot delete brand as it has subcategories with products in orders.');
-        }
 
         $brand->delete();
 

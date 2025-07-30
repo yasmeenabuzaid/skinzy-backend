@@ -7,6 +7,8 @@ use App\Models\Payment;
 use App\Models\OrderDetail;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\PaymentProof;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 
@@ -107,15 +109,21 @@ class OrderController extends Controller
         }
     }
 
-    public function show(Order $order)
-    {
-        $orderDetails = $order->orderDetails;
+public function show(Order $order)
+{
+    $order->load('user.addresses.city');
+    $orderDetails = $order->orderDetails;
+    $paymentProof = PaymentProof::where('order_id', $order->id)->first();
 
-        return view('dashboard.order.show', [
-            'order' => $order,
-            'orderDetails' => $orderDetails,
-        ]);
-    }
+    return view('dashboard.order.show', [
+        'order' => $order,
+        'orderDetails' => $orderDetails,
+        'paymentProof' => $paymentProof,
+    ]);
+}
+
+
+
 
     public function edit(Order $order)
     {

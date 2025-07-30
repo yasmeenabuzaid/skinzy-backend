@@ -1,6 +1,6 @@
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
-    <div class="copyright">
+    {{-- <div class="copyright">
         <div class="textwidget">
             <p style="text-align: center; font-size: 14px; color: #666;">
                 © 2025 | Developed by
@@ -8,7 +8,7 @@
                     A-tech
                 </a>. All rights reserved.
             </p>
-                    </div>    </div>
+                    </div>    </div> --}}
 
 </footer><!-- End Footer -->
 

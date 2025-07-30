@@ -46,7 +46,8 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h5 class="mb-0"><i class="fas fa-sitemap text-muted me-2"></i><strong>Category:</strong> {{ $product->category->name }}</h5>
+                                    <h5 class="mb-0"><i class="fas fa-sitemap text-muted me-2"></i><strong>sub Category:</strong> {{ $product->subCategory->name ?? 'N/A' }}
+</h5>
                                 </div>
                                 <div class="text-end">
                                     @if($product->price_after_discount)

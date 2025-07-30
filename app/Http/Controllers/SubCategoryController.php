@@ -6,6 +6,7 @@ use App\Models\SubCategory;
 use App\Models\Product;
 use App\Models\category;
 use Illuminate\Http\Request;
+  use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class SubCategoryController extends Controller
 {
@@ -14,13 +15,13 @@ class SubCategoryController extends Controller
      */
     public function index()
     {
-       
-         $Subcategories = SubCategory::all(); 
-      
+
+         $Subcategories = SubCategory::all();
+
         return view('dashboard.Subcategories.index' , ['Subcategories'=> $Subcategories]);
     }
 
-   
+
 
     /**
      * Show the form for creating a new resource.
@@ -34,34 +35,34 @@ class SubCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $validation = $request->validate([
-            'name' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'category_id' => 'required|exists:categories,id',
-        ]);
 
-        $filename = null;
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $path = public_path('uploads/subcategory/');
-            $file->move($path, $filename);
-        }
+public function store(Request $request)
+{
+    $validation = $request->validate([
+        'name' => 'required|string',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'category_id' => 'required|exists:categories,id',
+    ]);
 
-        $subCategory = SubCategory::create([
-            'name'=>$request->input('name'),
-            'image'=>$filename,
-            'category_id'=> $request->input('category_id'),
-        ]);
+    $imageUrl = null;
 
-       
+    if ($request->hasFile('image')) {
+        $file = $request->file('image');
 
-       
+        $uploadResult = Cloudinary::upload($file->getRealPath());
 
-        return to_route('subCategories.index')->with('success', 'Sub category created successfully');
+        $imageUrl = $uploadResult->getSecurePath();
     }
+
+    $subCategory = SubCategory::create([
+        'name' => $request->input('name'),
+        'image' => $imageUrl, 
+        'category_id' => $request->input('category_id'),
+    ]);
+
+    return to_route('subCategories.index')->with('success', 'Sub category created successfully');
+}
+
 
     /**
      * Display the specified resource.
@@ -99,20 +100,20 @@ class SubCategoryController extends Controller
             $path = public_path('uploads/subcategory/');
             $file->move($path, $filename);
         } else {
-            $filename = $subCategory->image; 
+            $filename = $subCategory->image;
         }
 
         $subCategory->update([
             'name'=>$request->input('name'),
             'image'=>$filename,
-            'discount' => $request->input('discount'), 
+            'discount' => $request->input('discount'),
             'category_id'=> $request->input('category_id'),
         ]);
 
         Product::where('subCategory_id', $subCategory->id)->update([
             'discount' => $request->input('discount'),
         ]);
-       
+
 
         return to_route('subCategories.index')->with('success', 'Sub category updated successfully');
     }
@@ -130,8 +131,8 @@ class SubCategoryController extends Controller
             return redirect()->back()->with('error', 'Cannot delete subcategory as it has products in orders.');
         }
 
-        $subCategory->delete(); 
-        
+        $subCategory->delete();
+
         return to_route('subCategories.index')->with('success', 'Sub category deleted');
     }
 

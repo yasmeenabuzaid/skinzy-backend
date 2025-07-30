@@ -117,12 +117,12 @@ html, body {
   }
 
   a {
-    color: #937524;
+    color: #FF671F;
     text-decoration: none;
   }
 
   a:hover {
-    color: #ae8e35;
+    color: #FF671F;
     text-decoration: none;
   }
 
@@ -730,11 +730,11 @@ html, body {
 
   .sidebar .nav-link.active {
     background-color: rgb(65, 65, 65)mportant;
-    color: #ba9737 !important;
+    color: #FF671F !important;
   }
 
   .sidebar .nav-link.active i {
-    color: #ba9737 !important;
+    color: #FF671F !important;
   }
   @media (max-width: 1199px) {
     .sidebar {
@@ -830,12 +830,12 @@ html, body {
   }
 
   .sidebar-nav .nav-link:hover {
-    color: #ba9737;
+    color: #FF671F;
     background: rgb(63, 63, 63);
   }
 
   .sidebar-nav .nav-link:hover i {
-    color: #ba9737;
+    color: #FF671F;
   }
 
   .sidebar-nav .nav-link .bi-chevron-down {

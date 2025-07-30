@@ -55,10 +55,10 @@
             <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
           </div>
 
-          <div class="col-md-6">
-            <label for="image" class="form-label">Product Images</label>
-            <input type="file" name="image[]" class="form-control" multiple>
-          </div>
+            <div class="col-md-6">
+        <label for="image" class="form-label">Product Images</label>
+        <input type="file" name="image[]" class="form-control" multiple>
+    </div>
 
           <div class="col-md-6">
             <label for="price" class="form-label">Current Price</label>

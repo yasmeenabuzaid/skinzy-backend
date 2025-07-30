@@ -5,14 +5,14 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Velar - Dashboard</title>
+  <title>Skinzy Care - Dashboard</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
 
   <!-- Favicons -->
-  <link href="{{asset("assets/img/new_logo.png")}}" rel="icon">
-  <link href="{{asset("assets/img/new_logo.png")}}" rel="apple-touch-icon">
+  <link href="{{asset("assets/img/favicon.ico")}}" rel="icon">
+  <link href="{{asset("assets/img/favicon.ico")}}" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
   <link href="{{asset("https://fonts.gstatic.com")}}" rel="preconnect">

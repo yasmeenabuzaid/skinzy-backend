@@ -10,27 +10,36 @@ use Square\SquareClient;
 use Square\Payments\Requests\CreatePaymentRequest;
 use Square\Types\Money;
 use Square\Types\Currency;
-use App\Models\Payment;
+use App\Models\PaymentProof;
 use App\Models\Order;
 
 class PaymentController extends Controller
 {
     public function index()
     {
-        $payments = Payment::orderBy('created_at', 'desc')->get();
-        return view('dashboard.payment.index', ['payments' => $payments]);
+
+        $proofs = PaymentProof::with(['user', 'order'])->latest()->get();
+        return view('dashboard.payment.index', ['proofs' => $proofs]);
     }
 
-    public function showForm($id)
-    {
-        $order_id = Order::findOrFail($id);
+  public function review(Request $request, PaymentProof $payment_proof)
+{
+    $oldStatus = $payment_proof->status;
+    $newStatus = $request->status;
+    $reviewedAt = now();
 
-        return view('payment', [
-            'order_id' => $order_id,
-            'square_app_id' => config('services.square.application_id'),
-            'square_location_id' => config('services.square.location_id'),
-        ]);
-    }
+    $payment_proof->update([
+        'status' => $newStatus,
+        'note' => $request->note,
+        'details' => "Status changed from '{$oldStatus}' to '{$newStatus}' on {$reviewedAt->format('Y-m-d H:i:s')} by user ID " . auth()->id(),
+        'paid_at' => $reviewedAt,
+        'reviewed_by' => auth()->id(),
+        'reviewed_at' => $reviewedAt,
+    ]);
+
+    return redirect()->back()->with('success', 'تم تحديث الحالة.');
+}
+
 
     public function success($id)
     {

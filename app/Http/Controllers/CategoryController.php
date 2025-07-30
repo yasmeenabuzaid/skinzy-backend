@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+   use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class CategoryController extends Controller
 {
@@ -43,30 +44,30 @@ public function softDelete($id)
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $validation = $request->validate([
-            'name' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
+public function store(Request $request)
+{
+    $validation = $request->validate([
+        'name' => 'required|string',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
 
-        $filename = null;
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $path = public_path('uploads/category/');
-            $file->move($path, $filename);
-        }
+    $imageUrl = null;
 
-        Category::create([
-            'name'=>$request->input('name'),
-            'image'=>$filename,
-        ]);
+    if ($request->hasFile('image')) {
+        $file = $request->file('image');
 
+        $uploadResult = Cloudinary::upload($file->getRealPath());
 
-
-        return to_route('categories.index')->with('success', 'Category created successfully');
+        $imageUrl = $uploadResult->getSecurePath();
     }
+
+    Category::create([
+        'name' => $request->input('name'),
+        'image' => $imageUrl,
+    ]);
+
+    return to_route('categories.index')->with('success', 'Category created successfully');
+}
 
     /**
      * Display the specified resource.

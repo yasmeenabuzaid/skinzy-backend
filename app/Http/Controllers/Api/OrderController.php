@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use App\Mail\AdminOrderNotification;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
@@ -146,85 +148,174 @@ public function deleteAddress($id)
     ]);
 }
 
-
-
-public function CreateOrder(Request $request)
+public function createOrder(Request $request)
 {
-    $userId = auth()->id();
+    \Log::info('== Start createOrder ==');
+    \Log::info('Uploaded Files:', $request->allFiles());
+    \Log::info('Request Data:', $request->all());
 
-    if (!$userId) {
-        return response()->json([
-            'success' => false,
-            'message' => 'User not authenticated'
-        ], 401);
-    }
+    try {
+        $userId = auth()->id();
+        \Log::info("Authenticated user ID: " . $userId);
 
-    $validatedData = $request->validate([
-        'payment_method' => 'required|string',
-        'shipping_method' => 'required|string',
-        'address_id' => 'required|integer|exists:addresses,id',
-        'email' => 'nullable|email',
-        'note' => 'nullable|string',
-    ]);
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not authenticated'
+            ], 401);
+        }
 
-    $order = Order::where('user_id', $userId)
-        ->where('order_status', 'cart')
-        ->first();
+        $validatedData = $request->validate([
+            'payment_method'   => 'required|string|in:cash_on_delivery,stripe,bank_transfer',
+            'shipping_method'  => 'required|string|in:home_delivery,pickup',
+            'address_id'       => 'required|integer|exists:addresses,id',
+            'email'            => 'nullable|email',
+            'note'             => 'nullable|string',
+            'image'            => 'required_if:payment_method,stripe|required_if:payment_method,bank_transfer|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'transaction_id'   => 'nullable|string|max:255',
+            'paid_amount'      => 'nullable|numeric',
+            'bank_name'        => 'nullable|string|max:255',
+            'account_number'   => 'nullable|string|max:255',
+        ]);
+        \Log::info('Validation passed', $validatedData);
 
-    if ($order) {
-        // تحديث الطلب
-        $order->payment_method = $validatedData['payment_method'];
-        $order->email = $validatedData['email'] ?? $order->email;
+        $order = Order::where('user_id', $userId)
+            ->where('order_status', 'cart')
+            ->first();
+
+        if (!$order) {
+            \Log::warning("No cart order found for user $userId");
+            return response()->json([
+                'success' => false,
+                'message' => 'No cart order found for update',
+            ], 404);
+        }
+
+        $order->payment_method  = $validatedData['payment_method'];
+        $order->email           = $validatedData['email'] ?? $order->email;
         $order->shipping_method = $validatedData['shipping_method'];
-        $order->address_id = $validatedData['address_id'];
-        $order->note = $validatedData['note'] ?? $order->note;
-        $order->order_status = "pending_payment";
-        $order->save();
+        $order->address_id      = $validatedData['address_id'];
+        $order->note            = $validatedData['note'] ?? $order->note;
+        $order->order_status    = "pending_payment";
 
-        // جلب عناصر الكارت
         $cartItems = Cart::where('user_id', $userId)
             ->where('status', 'pending')
+            ->where('order_id', $order->id)
             ->get();
+
+        $totalPrice = 0.0;
 
         foreach ($cartItems as $item) {
             $product = Product::find($item->product_id);
-            if (!$product) continue; // تأكد أن المنتج موجود
+            if (!$product) {
+                \Log::warning("Product not found for cart item", ['cart_item_id' => $item->id]);
+                continue;
+            }
 
-            $price = $product->price; // لازم تتأكد إن عمود price موجود في جدول products
-            $quantity = $item->quantity;
-            $discount = 0; // لو عندك خصم ممكن تجيبه من مكان ثاني
-            $total = $quantity * $price;
+            $unitPrice = $product->price_after_discount ?? $product->price ?? 0;
+            $itemTotal = $item->quantity * $unitPrice;
+            $totalPrice += $itemTotal;
 
             OrderDetail::create([
-                'order_id' => $order->id,
-                'product_id' => $product->id,
-                'quantity' => $quantity,
-                'price' => $price,
-                'discount' => $discount,
-                'total_price' => $total,
+                'order_id'    => $order->id,
+                'product_id'  => $product->id,
+                'quantity'    => $item->quantity,
+                'price'       => $unitPrice,
+                'discount'    => 0,
+                'total_price' => $itemTotal,
             ]);
 
-            // تحديث حالة الكارت
-            $item->status = 'ordered';
-            $item->order_id = $order->id;
+            $item->status     = 'ordered';
             $item->ordered_at = now();
             $item->save();
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Order created and cart items moved to order_details.',
-            'order' => $order,
+        $FREE_SHIPPING_THRESHOLD = 15;
+
+        $deliveryFee = 0.0;
+        $freeShippingApplied = false;
+
+        $address = \App\Models\Address::find($validatedData['address_id']);
+        if ($address && $validatedData['shipping_method'] === 'home_delivery') {
+            $deliveryFee = (float) ($address->city->delivery_fee ?? 0);
+
+            if ($totalPrice >= $FREE_SHIPPING_THRESHOLD) {
+                $freeShippingApplied = true;
+                $deliveryFee = 0.0;
+                \Log::info("Free shipping applied since subtotal >= {$FREE_SHIPPING_THRESHOLD}");
+            }
+        }
+
+        if ($validatedData['shipping_method'] !== 'home_delivery') {
+            $deliveryFee = 0.0;
+        }
+
+        $order->total_price = $totalPrice + $deliveryFee;
+        $order->final_price = $order->total_price;
+        $order->save();
+
+        \Log::info("Prices calculated", [
+            'subtotal'              => $totalPrice,
+            'delivery_fee'          => $deliveryFee,
+            'free_shipping_applied' => $freeShippingApplied,
+            'final_price'           => $order->final_price
         ]);
-    } else {
+
+        \Log::info("Cart items moved to order details", ['count' => $cartItems->count()]);
+
+        if (in_array($validatedData['payment_method'], ['stripe', 'bank_transfer'])) {
+
+            $uploadedFile = $request->file('image');
+            \Log::info("Uploading image to Cloudinary...");
+            $cloudinaryUpload = Cloudinary::upload($uploadedFile->getRealPath(), [
+                'folder'        => 'payment_proofs',
+                'resource_type' => 'auto',
+            ]);
+            $imageUrl = $cloudinaryUpload->getSecurePath();
+            \Log::info("Uploaded to Cloudinary", ['url' => $imageUrl]);
+
+            \App\Models\PaymentProof::create([
+                'order_id'       => $order->id,
+                'user_id'        => $userId,
+                'image'          => $imageUrl,
+                'payment_method' => $validatedData['payment_method'],
+                'transaction_id' => $validatedData['transaction_id'] ?? null,
+                'paid_amount'    => $validatedData['paid_amount'] ?? null,
+                'bank_name'      => $validatedData['bank_name'] ?? null,
+                'account_number' => $validatedData['account_number'] ?? null,
+                'note'           => $validatedData['note'] ?? null,
+                'submitted_at'   => now(),
+            ]);
+            \Log::info("Payment proof saved");
+        }
+
+        $adminEmail = config('mail.admin_email', 'admin@example.com');
+        Mail::to($adminEmail)->send(new AdminOrderNotification($order));
+        \Log::info("Admin notified via email at: " . $adminEmail);
+
+        return response()->json([
+            'success'                => true,
+            'message'                => $freeShippingApplied
+                ? 'Order created successfully. Free delivery applied.'
+                : 'Order created successfully.',
+            'order'                  => $order,
+            'subtotal'               => $totalPrice,
+            'deliveryFee'            => $deliveryFee,
+            'finalPrice'             => $order->final_price,
+            'free_shipping_applied'  => $freeShippingApplied,
+            'free_shipping_threshold'=> $FREE_SHIPPING_THRESHOLD,
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('CreateOrder error: ' . $e->getMessage(), [
+            'trace'   => $e->getTraceAsString(),
+            'request' => $request->all()
+        ]);
         return response()->json([
             'success' => false,
-            'message' => 'No cart order found for update',
-        ], 404);
+            'message' => 'Something went wrong. Please try again.',
+        ], 500);
     }
 }
-
-
-
 
 }

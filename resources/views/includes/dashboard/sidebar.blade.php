@@ -2,7 +2,7 @@
   <aside id="sidebar" class="sidebar">
 
     <div class="logo-container">
-        <img src="{{asset('assets/img/new_logo2.png')}}" alt="Logo" class="logo-img">
+        <img src="{{asset('assets/img/bark_Logo.png')}}" alt="Logo" class="logo-img">
       </div>
 
     <ul class="sidebar-nav" id="sidebar-nav">
@@ -63,14 +63,14 @@
 
       </li><!-- End Charts Nav -->
 
-      {{-- @if(Auth::user()->role == 'manager')
+       {{-- @if(Auth::user()->role == 'manager')
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('contacts.index', 'contacts.show') ? 'active' : '' }} collapsed" href="/contacts">
           <i class="bi bi-envelope"></i>
           <span>Contact Us</span>
         </a>
       </li><!-- End Contact Page Nav -->
-      @endif --}}
+      @endif
       {{-- @if(Auth::user()->role == 'manager')
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('feedback.index', 'feedback.show') ? 'active' : '' }} collapsed" href="{{ route('feedback.index') }}">
@@ -78,7 +78,7 @@
         <span class="ms-1">feedback</span>
         </a>
       </li>
-      @endif
+      @endif --}}
 
       @if(Auth::user()->role == 'manager')
       <li class="nav-item">
@@ -87,7 +87,7 @@
           <span class="ms-1">payments</span>
         </a>
       </li>
-      @endif --}}
+      @endif
 
 
 
@@ -103,12 +103,12 @@
       </li><!-- End Profile Page Nav -->
 
 
-      <li class="nav-item">
+      {{-- <li class="nav-item">
         <a class="nav-link collapsed" href="{{route('home')}}">
           <i class="bi bi-house-door"></i>
           <span>User side</span>
         </a>
-      </li><!-- End F.A.Q Page Nav -->
+      </li><!-- End F.A.Q Page Nav --> --}}
 
 
       <li class="nav-item">

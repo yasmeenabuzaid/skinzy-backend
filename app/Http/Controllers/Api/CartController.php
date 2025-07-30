@@ -19,10 +19,9 @@ public function getCart(Request $request)
         ], 401);
     }
 
-    // جلب جميع عناصر السلة التي تكون status = 'pending' ولمستخدم محدد
     $cartItems = Cart::where('user_id', $userId)
         ->where('status', 'pending')
-        ->with('product') // تأكد أن العلاقة 'product' معرفة في موديل Cart
+        ->with('product.images')
         ->get();
 
     return response()->json([
@@ -46,9 +45,8 @@ public function getCart(Request $request)
     $userId = auth()->id();
     $user = auth()->user();
 
-    // جلب الطلب الحالي (pending_payment) أو إنشاء واحد جديد
     $order = Order::firstOrCreate(
-        ['user_id' => $userId, 'order_status' => 'pending_payment'],
+        ['user_id' => $userId, 'order_status' => 'cart'],
         [
             'total_price' => 0,
             'mobile' => $user->mobile ?? null,
