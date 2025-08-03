@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Brand;
 use App\Models\SubCategory;
 use App\Models\ProductImage;
 use App\Models\Feedback;
-use App\Models\ProductDetail;
+use App\Models\Specification;
 use Illuminate\Http\Request;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
@@ -18,23 +19,15 @@ class ProductController extends Controller
      */
 
 
-// public function getVariation($id)
-// {
-//     $variation = Product::with('product_images')->findOrFail($id);
-//     return response()->json([
-//         'id' => $variation->id,
-//         'name' => $variation->name,
-//         'price' => $variation->price,
-//         'small_description' => $variation->small_description,
-//         'image' => asset($variation->product_images->first()->image ?? 'default-image.jpg'),
-//     ]);
-// }
 
 public function index(Request $request)
 {
-    $products = Product::with(['images', 'subCategory'])->get();
+    $products = Product::with(['images', 'subCategory'])
+        ->where('isDelete', false)
+        ->get();
 
     $mainProducts = Product::where('type', 'main')
+        ->where('isDelete', false)
         ->with(['variations', 'images', 'subCategory'])
         ->get();
 
@@ -46,122 +39,60 @@ public function index(Request $request)
 
 
 
-
-    public function shop(Request $request)
-{
-    $categories = Category::all();
-
-    $products = Product::with('images')
-        ->where('quantity', '>', 0)
-        ->get();
-
-    return view('shop', [
-        'products' => $products,
-        'categories' => $categories
-    ]);
-}
-
-
-    public function dark(Request $request)
-    {
-        $products = Product::with(['product_images', 'subCategory.category'])
-            ->where('quantity', '>', 0)
-            ->whereHas('subCategory', function ($query) {
-                $query->whereRaw('LOWER(name) LIKE ?', ['%dark%'])
-                    ->orWhereHas('category', function ($q) {
-                        $q->whereRaw('LOWER(name) LIKE ?', ['%dark%']);
-                    });
-            })
-            ->get();
-
-        $categories = Category::whereRaw('LOWER(name) LIKE ?', ['%dark%'])->get();
-
-        return view('chocolaterie-dark', [
-            'products' => $products,
-            'categories' => $categories
-        ]);
-    }
-
-
-
-
-    public function light(Request $request)
-    {
-        $products = Product::with(['product_images', 'subCategory.category'])
-            ->where('quantity', '>', 0)
-            ->whereHas('subCategory', function ($query) {
-                $query->whereRaw('LOWER(name) LIKE ?', ['%white%'])
-                    ->orWhereRaw('LOWER(name) LIKE ?', ['%milk%'])
-                    ->orWhereRaw('LOWER(name) LIKE ?', ['%حليب%'])
-                    ->orWhereHas('category', function ($q) {
-                        $q->whereRaw('LOWER(name) LIKE ?', ['%white%'])
-                            ->orWhereRaw('LOWER(name) LIKE ?', ['%milk%'])
-                            ->orWhereRaw('LOWER(name) LIKE ?', ['%حليب%']);
-                    });
-            })
-            ->get();
-
-        $categories = Category::where(function ($q) {
-            $q->whereRaw('LOWER(name) LIKE ?', ['%white%'])
-                ->orWhereRaw('LOWER(name) LIKE ?', ['%milk%'])
-                ->orWhereRaw('LOWER(name) LIKE ?', ['%حليب%']);
-        })->get();
-
-        return view('chocolaterie-light', [
-            'products' => $products,
-            'categories' => $categories
-        ]);
-    }
-
-
-
-
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
         $mainProducts = Product::where('type', 'main')->get();
+ $brands = Brand::all();
+        $SubCategories= SubCategory::where('isDelete', false)->get();
 
-        $SubCategories= SubCategory::all();
-
-        return view ('dashboard.products.create',['SubCategories'=>$SubCategories ,'mainProducts'=>$mainProducts]);
+        return view ('dashboard.products.create',['SubCategories'=>$SubCategories ,'mainProducts'=>$mainProducts,'brands'=>$brands]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
- public function store(Request $request)
+public function store(Request $request)
 {
     $validation = $request->validate([
         'name' => 'required|string',
+        'name_ar' => 'required|string',
         'small_description' => 'required|string',
+        'small_description_ar' => 'required|string',
         'description' => 'required',
+        'description_ar' => 'required',
         'price_after_discount' => 'nullable|numeric',
         'price' => 'required|numeric',
         'quantity' => 'required|integer|min:1',
         'image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,WEBP,AVIF|max:2048',
         'sub_category_id' => 'required|exists:categories,id',
+        'brand_id' => 'required|exists:brands,id',
         'type' => 'required|in:main,variation',
         'parent_product_id' => 'nullable|exists:products,id',
 
-        'brand' => 'nullable|string',
-        'shade' => 'nullable|string',
-        'finish' => 'nullable|in:matte,glossy,satin,shimmer',
-        'skin_type' => 'nullable|in:oily,dry,combination,sensitive',
-        'ingredients' => 'nullable|string',
-        'volume' => 'nullable|string',
-        'usage_instructions' => 'nullable|string',
+
+
+        'specifications' => 'nullable|array',
+        'specifications.*.key' => 'nullable|string',
+        'specifications.*.key_ar' => 'nullable|string',
+        'specifications.*.value' => 'nullable|string',
+        'specifications.*.value_ar' => 'nullable|string',
     ]);
 
     $product = Product::create([
         'name' => $request->name,
+        'name_ar' => $request->name_ar,
         'small_description' => $request->small_description,
+        'small_description_ar' => $request->small_description_ar,
         'description' => $request->description,
+        'description_ar' => $request->description_ar,
         'price' => $request->price,
         'price_after_discount' => $request->price_after_discount,
         'quantity' => $request->quantity,
         'sub_category_id' => $request->sub_category_id,
+        'brand_id' => $request->brand_id,
         'type' => $request->type,
         'parent_product_id' => $request->type === 'variation' ? $request->parent_product_id : null,
     ]);
@@ -179,6 +110,8 @@ public function index(Request $request)
                 $images[] = [
                     'image' => $imageUrl,
                     'product_id' => $product->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ];
             } catch (\Exception $e) {
                 return back()->with('error', 'Image upload error: ' . $e->getMessage());
@@ -187,35 +120,39 @@ public function index(Request $request)
         ProductImage::insert($images);
     }
 
-    ProductDetail::create([
-        'product_id' => $product->id,
-        'brand' => $request->brand,
-        'shade' => $request->shade,
-        'finish' => $request->finish,
-        'skin_type' => $request->skin_type,
-        'ingredients' => $request->ingredients,
-        'volume' => $request->volume,
-        'usage_instructions' => $request->usage_instructions,
-    ]);
+    if ($request->filled('specifications')) {
+        foreach ($request->specifications as $spec) {
+            if (!empty($spec['key']) && !empty($spec['value'])) {
+                $product->specifications()->create([
+                    'key' => $spec['key'],
+                    'key_ar' => $spec['key_ar'] ?? null,
+                    'value' => $spec['value'],
+                    'value_ar' => $spec['value_ar'] ?? null,
+                ]);
+            }
+        }
+    }
 
     return to_route('products.index')->with('success', 'Product created successfully');
 }
 
+
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
-    {
-        $productImages = $product->images;
+public function show(Product $product)
+{
+    $product->load(['brand', 'images']);
 
-        $product_details = ProductDetail::where('product_id', $product->id)->first();
+    $productImages = $product->images;
+    $product_details = Specification::where('product_id', $product->id)->first();
 
-        return view('dashboard.products.show', [
-            'product' => $product,
-            'productImages' => $productImages,
-            'product_details' => $product_details,
-        ]);
-    }
+    return view('dashboard.products.show', [
+        'product' => $product,
+        'productImages' => $productImages,
+        'product_details' => $product_details,
+    ]);
+}
 
 
 
@@ -288,15 +225,17 @@ if ($product->type == 'main') {
      */
     public function edit(Product $product)
     {
-        $product_details = ProductDetail::where('product_id', $product->id)->first();
+        $product_details = Specification::where('product_id', $product->id)->first();
         $productImages = $product->images;
-       $subCategories = SubCategory::all();
+       $subCategories = SubCategory::where('isDelete', false)->get();
+ $brands = Brand::all();
 
 return view('dashboard.products.edit', [
     'product'         => $product,
     'subCategories'   => $subCategories,
     'productImages'   => $productImages,
-    'product_details' => $product_details
+    'product_details' => $product_details,
+    'brands' => $brands
 ]);
 
     }
@@ -304,119 +243,79 @@ return view('dashboard.products.edit', [
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
-    {
-        $validation = $request->validate([
-            'name' => 'required|string',
-            'small_description' => 'required|string',
-            'description' => 'required',
-             'price_after_discount' => 'nullable|numeric',
+public function update(Request $request, Product $product)
+{
+    $validation = $request->validate([
+        'name_ar' => 'required|string',
+        'name' => 'required|string',
+        'small_description' => 'required|string',
+        'small_description_ar' => 'required|string',
+        'description' => 'required',
+        'description_ar' => 'required',
+        'price_after_discount' => 'nullable|numeric',
         'price' => 'required|numeric',
-            'quantity' => 'required|integer|min:1',
-            'image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,WEBP,AVIF|max:2048',
+        'quantity' => 'required|integer|min:1',
+        'image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,WEBP,AVIF|max:2048',
         'sub_category_id' => 'required|exists:categories,id',
-        'brand' => 'nullable|string',
-        'shade' => 'nullable|string',
-        'finish' => 'nullable|in:matte,glossy,satin,shimmer',
-        'skin_type' => 'nullable|in:oily,dry,combination,sensitive',
-        'ingredients' => 'nullable|string',
-        'volume' => 'nullable|string',
-        'usage_instructions' => 'nullable|string',
-        ]);
+        'brand_id' => 'required|exists:brands,id',
+        'specifications' => 'nullable|array',
+        'specifications.*.key' => 'nullable|string',
+        'specifications.*.key_ar' => 'nullable|string',
+        'specifications.*.value' => 'nullable|string',
+        'specifications.*.value_ar' => 'nullable|string',
+    ]);
 
+    $product->update([
+        'name' => $request->input('name'),
+        'name_ar' => $request->input('name_ar'),
+        'small_description' => $request->input('small_description'),
+        'small_description_ar' => $request->input('small_description_ar'),
+        'description' => $request->input('description'),
+        'description_ar' => $request->input('description_ar'),
+        'price' => $request->input('price'),
+        'price_after_discount' => $request->input('price_after_discount'),
+        'quantity' => $request->input('quantity'),
+        'sub_category_id' => $request->input('sub_category_id'),
+        'brand_id' => $request->input('brand_id'),
+    ]);
 
-
-        $product->update([
-            'name'=>$request->input('name'),
-            'small_description'=>$request->input('small_description'),
-            'description'=>$request->input('description'),
-            'price'=>$request->input('price'),
-            'price_after_discount'=>$request->input('price_after_discount'),
-            'quantity'=>$request->input('quantity'),
-            'sub_category_id'=>$request->input('sub_category_id'),
-        ]);
-
+    // رفع الصور
+    if ($request->hasFile('image')) {
         $images = [];
+        foreach ($request->file('image') as $file) {
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+            $path = public_path('uploads/productImages/');
+            $file->move($path, $filename);
+            $images[] = [
+                'image' => 'uploads/productImages/' . $filename,
+                'product_id' => $product->id,
+            ];
+        }
+        ProductImage::insert($images);
+    }
 
-        if ($request->hasFile('image')) {
-            foreach($request->file('image') as $file) {
-
-                $filename = uniqid() . '_' . $file->getClientOriginalExtension();
-                $path = public_path('uploads/productImages/');
-                $file->move($path, $filename);
-
-
-                $images[] = [
-                    'image' => 'uploads/productImages/' . $filename,
-                    'product_id'=> $product->id,
-                ];
+    // تحديث المواصفات
+    if ($request->has('specifications')) {
+        foreach ($request->input('specifications') as $spec) {
+            if (!empty($spec['key']) || !empty($spec['value'])) {
+                Specification::updateOrCreate(
+                    [
+                        'product_id' => $product->id,
+                        'key' => $spec['key'],
+                    ],
+                    [
+                        'key_ar' => $spec['key_ar'] ?? '',
+                        'value' => $spec['value'] ?? '',
+                        'value_ar' => $spec['value_ar'] ?? '',
+                    ]
+                );
             }
-
-
-            ProductImage::insert($images);
         }
-
-       ProductDetail::updateOrCreate(
-    ['product_id' => $product->id],
-    [
-        'brand' => $request->input('brand'),
-        'shade' => $request->input('shade'),
-        'finish' => $request->input('finish'),
-        'skin_type' => $request->input('skin_type'),
-        'ingredients' => $request->input('ingredients'),
-        'volume' => $request->input('volume'),
-        'usage_instructions' => $request->input('usage_instructions'),
-    ]
-);
-
-
-
-        return to_route('products.index')->with('success', 'Product updated successfully');
     }
 
-
-    public function productsByCategory($id, Request $request)
-    {
-        $allcategories = Category::all();
-
-        $category = Category::findOrFail($id);
-
-        $maxPrice = Product::whereHas('subCategory', function ($query) use ($id) {
-            $query->where('category_id', $id);
-        })
-        ->where('quantity', '>', 0)
-        ->max('price');
-
-        $query = Product::with('product_images')
-            ->where('quantity', '>', 0)
-            ->whereHas('subCategory', function ($query) use ($id) {
-                $query->where('category_id', $id);
-            });
-
-        if ($request->has('min_price') && $request->has('max_price')) {
-            $minPrice = $request->query('min_price', 0);
-            $maxPrice = $request->query('max_price', $maxPrice);
-
-            $query->where(function ($query) use ($minPrice, $maxPrice) {
-                $query->whereBetween('price', [$minPrice, $maxPrice])
-                      ->orWhere(function ($query) use ($minPrice, $maxPrice) {
-                          $query->whereRaw('price - (price * discount / 100) BETWEEN ? AND ?', [$minPrice, $maxPrice]);
-                      });
-            });
-        }
-
-        $products = $query->orderBy('name', 'asc')->paginate(16);
-
-        $displayedCategories = $allcategories->where('id', '!=', $id);
-
-        return view('products-by-category', compact(
-            'products',
-            'category',
-            'maxPrice',
-            'allcategories',
-            'displayedCategories'
-        ));
+     return to_route('products.index')->with('success', 'Product updated successfully');
     }
+
 
 
 
@@ -459,15 +358,16 @@ return view('dashboard.products.edit', [
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
-    {
-
-        if ($product->orderDetails()->exists()) {
-            return to_route('products.index')->with('error', 'Cannot delete a product with active orders.');
-        }
-
-        $product->delete();
-
-        return to_route('products.index')->with('success', 'Product deleted');
+public function destroy(Product $product)
+{
+    if ($product->orderDetails()->exists()) {
+        return to_route('products.index')->with('error', 'Cannot delete a product with active orders.');
     }
+
+    $product->isDelete = true;
+    $product->save();
+
+    return to_route('products.index')->with('success', 'Product deleted');
+}
+
 }

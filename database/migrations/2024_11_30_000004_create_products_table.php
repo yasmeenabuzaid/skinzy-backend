@@ -13,19 +13,21 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+
             $table->string('name');
             $table->string('small_description');
             $table->text('description');
+
+            $table->string('name_ar')->nullable();
+            $table->string('small_description_ar')->nullable();
+            $table->text('description_ar')->nullable();
+
             $table->float('price');
-    $table->float('price_after_discount')->nullable();
+            $table->float('price_after_discount')->nullable();
             $table->unsignedInteger('quantity');
 
-            $table->unsignedBigInteger('category_id');
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->boolean('isDelete')->default(false);
-            $table->boolean('isActive')->default(true);
 
-            $table->softDeletes();
             $table->timestamps();
         });
     }

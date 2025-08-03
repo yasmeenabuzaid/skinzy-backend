@@ -35,7 +35,6 @@ $table->foreignId('address_id')->nullable()->constrained()->onDelete('set null')
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
 
-            $table->softDeletes();
             $table->timestamps();
         });
     }

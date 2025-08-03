@@ -33,7 +33,7 @@
       <div class="col-12">
         <label for="image" class="form-label">Current image</label><br>
         @if($brand->image)
-          <img src="{{ asset('uploads/brand/' . $brand->image) }}" alt="Brand image" style="width: 100px;">
+          <img src="{{ asset( $brand->image) }}" alt="Brand image" style="width: 100px;">
         @else
           <span>No image available</span>
         @endif
@@ -45,7 +45,7 @@
       </div>
 
       <div class="text-end">
-        <button type="button" id="editButton" class="btn btn-info">Edit</button>
+        <button type="button" id="editButton" class="btn btn-primary">Edit</button>
         <a href="{{ route('brands.index') }}" class="btn btn-secondary">Cancel</a>
       </div>
     </form>
@@ -56,7 +56,7 @@
 <div id="confirmationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center;">
   <div style="background: #fff; padding: 20px; border-radius: 5px; text-align: center;">
     <h5>Are you sure you want to edit this brand?</h5>
-    <button id="confirmButton" class="btn btn-info btn-fw">Edit</button>
+    <button id="confirmButton" class="btn btn-primary">Edit</button>
     <button id="cancelButton" class="btn btn-secondary">Cancel</button>
   </div>
 </div>

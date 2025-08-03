@@ -17,7 +17,7 @@ class ChartController extends Controller
     {
         $ALlOrderCount = Order::count();
         $productCount = Product::count();
-        $userCount = User::count();
+$userCount = User::where('id', '!=', auth()->id())->count();
 
         $pendingPaymentCount = Order::where('order_status', 'pending_payment')->count();
         $processingCount = Order::where('order_status', 'processing')->count();

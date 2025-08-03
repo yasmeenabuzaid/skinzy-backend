@@ -30,7 +30,6 @@ return new class extends Migration
             ['name' => 'Ajloun'],
             ['name' => 'Madaba'],
             ['name' => 'Dead Sea'],
-            ['name' => 'Other'], // For manual city input
         ]);
     }
 

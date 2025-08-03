@@ -16,6 +16,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\DeletedItemsController;
 
 
 use Illuminate\Support\Facades\Auth;
@@ -134,3 +135,20 @@ Route::post('/payment-proofs/{payment_proof}/review', [PaymentController::class,
 // Webhook for Square
 Route::post('/webhooks/square', [WebhookController::class, 'handle']);
 Route::post('/square/webhook', [PaymentController::class, 'handleWebhook']);
+
+
+
+// عرض المحذوفات
+Route::get('/deleted/categories', [DeletedItemsController::class, 'deletedCategories'])->name('deleted.categories');
+Route::get('/deleted/subCategories', [DeletedItemsController::class, 'deletedSubCategories'])->name('deleted.subCategories');
+Route::get('/deleted/products', [DeletedItemsController::class, 'deletedProducts'])->name('deleted.products');
+
+// استرجاع العناصر المحذوفة
+Route::put('/deleted/categories/{id}/restore', [DeletedItemsController::class, 'restoreCategory'])->name('categories.restore');
+Route::put('/deleted/subCategories/{id}/restore', [DeletedItemsController::class, 'restoreSubCategory'])->name('subCategories.restore');
+Route::put('/deleted/products/{id}/restore', [DeletedItemsController::class, 'restoreProduct'])->name('products.restore');
+
+// حذف نهائي للعناصر المحذوفة
+Route::delete('/deleted/categories/{id}/forceDelete', [DeletedItemsController::class, 'forceDeleteCategory'])->name('categories.forceDelete');
+Route::delete('/deleted/subCategories/{id}/forceDelete', [DeletedItemsController::class, 'forceDeleteSubCategory'])->name('subCategories.forceDelete');
+Route::delete('/deleted/products/{id}/forceDelete', [DeletedItemsController::class, 'forceDeleteProduct'])->name('products.forceDelete');

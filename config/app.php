@@ -16,6 +16,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+    'user_view_url' => env('USER_VIEW_URL', 'https://default-url.com'),
 
     /*
     |--------------------------------------------------------------------------

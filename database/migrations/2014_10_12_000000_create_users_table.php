@@ -21,8 +21,8 @@ return new class extends Migration
 
             $table->string('mobile');
             $table->string('password');
+            $table->boolean('isDelete')->default(false);
 
-            $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
         });

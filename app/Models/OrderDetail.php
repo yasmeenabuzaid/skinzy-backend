@@ -4,14 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrderDetail extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $dates = ['deleted_at'];
-    
+
     protected $guarded  = [];
 
 
@@ -24,5 +23,5 @@ class OrderDetail extends Model
     {
         return $this->belongsTo(Product::class);
     }
-    
+
 }

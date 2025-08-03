@@ -20,7 +20,6 @@ return new class extends Migration
     $table->string('full_address');
 
     $table->foreignId('city_id')->constrained('cities')->onDelete('restrict'); // المدينة من جدول المحافظات
-    $table->string('custom_city')->nullable(); // لو اختار "أخرى" يعبّيها
 
     $table->string('state')->nullable();
     $table->string('postal_code')->nullable();

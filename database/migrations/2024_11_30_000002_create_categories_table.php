@@ -13,11 +13,14 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('image')->nullable();
-            $table->boolean('isDelete')->default(false); 
 
-            $table->softDeletes();
+            $table->string('name');
+            $table->string('name_ar')->nullable();
+
+            $table->string('image')->nullable();
+
+            $table->boolean('isDelete')->default(false);
+
             $table->timestamps();
         });
     }

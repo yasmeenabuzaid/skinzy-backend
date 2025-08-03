@@ -1,58 +1,75 @@
 @extends('layouts.app')
-
 @section('content')
-<div class="main-content main-content-login" style="background-color: #f8f9fa; min-height: 90vh; display: flex; justify-content: center; align-items: center;">
-    <div class="login-box card"
-         style="width: 100%; max-width: 700px; border: 1px solid #ddd; border-radius: 8px; padding: 50px;padding-top:60px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); background-color: #fff;">
-        <h4 class="text-center mb-4">Login to Your Account</h4>
+    <div class="main-content main-content-login">
 
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
+        <div class="shape-bg">
+            <div class="shape shape1"></div>
+            <div class="shape shape2"></div>
+            <div class="shape shape3"></div>
+            <div class="shape shape4"></div>
+            <div class="shape shape5"></div>
+            <div class="shape shape6"></div>
+            <div class="shape shape7"></div>
+        </div>
 
-            <!-- Email -->
-            <div class="mb-3">
-                <label for="email" class="form-label">{{ __('Email Address') }}</label>
-                <input id="email" type="email"
-                    class="form-control @error('email') is-invalid @enderror"
-                    name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
-                    placeholder="Enter your email address">
-
-                @error('email')
-                    <span class="invalid-feedback d-block" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                @enderror
+        <div class="login-container">
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor"
+                    class="bi bi-gear-fill" viewBox="0 0 16 16">
+                    <path
+                        d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311a1.464 1.464 0 0 1-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c-1.4-.413-1.4-2.397 0-2.81l.34-.1a1.464 1.464 0 0 1 .872-2.105l-.17-.31c-.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.858 2.929 2.929 0 0 1 0 5.858z" />
+                </svg>
             </div>
+            <h4>Admin Panel</h4>
+            <p class="subtitle">Welcome! Please enter your details.</p>
 
-            <!-- Password -->
-            <div class="mb-3">
-                <label for="password" class="form-label">{{ __('Password') }}</label>
-                <input id="password" type="password"
-                    class="form-control @error('password') is-invalid @enderror"
-                    name="password" required autocomplete="current-password"
-                    placeholder="Enter your password">
+            <form method="POST" action="{{ route('login') }}" class="text-start">
+                @csrf
 
-                @error('password')
-                    <span class="invalid-feedback d-block" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                @enderror
-            </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">{{ __('Email Address') }}</label>
+                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
+                        name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
+                        placeholder="admin@example.com">
+                    @error('email')
+                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                    @enderror
+                </div>
 
-            <!-- Submit button -->
-            <div class="d-grid mb-7">
-                <button type="submit" class="btn btn-primary">
-                    {{ __('Login') }}
-                </button>
-            </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">{{ __('Password') }}</label>
+                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
+                        name="password" required autocomplete="current-password" placeholder="••••••••">
+                    @error('password')
+                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                    @enderror
+                </div>
 
-            <!-- Register link -->
-            <div class="text-center">
-                <a href="{{ route('register') }}" class="text-decoration-none">
-                    {{ __("Don't have an account? Create one") }}
-                </a>
-            </div>
-        </form>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    @if (Route::has('password.request'))
+                        <a class="forgot-password" href="{{ route('password.request') }}">{{ __('Forgot Password?') }}</a>
+                    @endif
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-login"
+                        style="  background: #FF671F;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 14px;
+        border-radius: 12px;
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 103, 31, 0.3);">{{ __('Login') }}</button>
+                </div>
+            </form>
+        </div>
+
+        <footer class="login-footer">
+            © {{ date('Y') }} Skinzy Care. All Rights Reserved.
+        </footer>
+
     </div>
-</div>
 @endsection

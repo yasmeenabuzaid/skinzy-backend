@@ -4,13 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Scopes\NotDeletedScope;
 
 class Product extends Model
 {
     use HasFactory;
 
-    protected $dates = ['deleted_at'];
-
+   protected static function booted()
+    {
+        static::addGlobalScope(new NotDeletedScope);
+    }
     protected $guarded  = [];
 
 
@@ -48,11 +51,15 @@ public function parentProduct()
         return $this->hasMany(OrderDetail::class);
     }
   // Product.php
- public function details()
-    {
-        return $this->hasOne(ProductDetail::class, 'product_id');
-    }
+public function specifications()
+{
+    return $this->hasMany(Specification::class);
+}
 
+public function brand()
+{
+    return $this->belongsTo(Brand::class);
+}
 
 
 

@@ -1,0 +1,299 @@
+   body {
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .main-content-reset {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 90vh;
+        background-color: #f0f2f5;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* --- Animated Background Shapes --- */
+    .shape-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+    .shape-bg .shape {
+        position: absolute;
+        list-style: none;
+        display: block;
+        background-color: rgba(255, 103, 31, 0.15);
+        animation: animateShapes 12s linear infinite;
+        bottom: -200px;
+    }
+
+    .shape-bg .shape1 { left: 10%; width: 80px; height: 80px; animation-delay: 0s; }
+    .shape-bg .shape2 { left: 20%; width: 30px; height: 30px; animation-delay: 1s; animation-duration: 9s; }
+    .shape-bg .shape3 { left: 25%; width: 100px; height: 100px; animation-delay: 3s; }
+    .shape-bg .shape4 { left: 40%; width: 150px; height: 150px; animation-delay: 0s; animation-duration: 14s; }
+    .shape-bg .shape5 { left: 65%; width: 40px; height: 40px; animation-delay: 0s; }
+    .shape-bg .shape6 { left: 75%; width: 110px; height: 110px; animation-delay: 2s; }
+    .shape-bg .shape7 { left: 90%; width: 120px; height: 120px; animation-delay: 5s; animation-duration: 15s; }
+
+    @keyframes animateShapes {
+        0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 20%; }
+        100% { transform: translateY(-1200px) rotate(720deg); opacity: 0; border-radius: 50%; }
+    }
+
+    /* --- Form Container --- */
+    .reset-container {
+        width: 100%;
+        max-width: 420px;
+        background: #ffffff;
+        padding: 40px 30px;
+        border-radius: 24px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        z-index: 2;
+        text-align: center;
+        border: 1px solid #e8e8e8;
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reset-container .logo { color: #FF671F; font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .reset-container h4 { color: #1c1e21; font-weight: 700; font-size: 1.8rem; margin-bottom: 8px; }
+    .reset-container p.subtitle { color: #606770; margin-bottom: 2rem; }
+
+    /* Form Styles */
+    .form-label { color: #333; font-weight: 600; text-align: left; display: block; margin-bottom: 5px; }
+    .form-control {
+        background: #f0f2f5;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        color: #1c1e21;
+        height: 50px;
+        padding: 0 15px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .form-control:focus {
+        background: #fff;
+        border-color: #FF671F;
+        box-shadow: 0 0 0 3px rgba(255, 103, 31, 0.2);
+    }
+    .btn-reset {
+        background: #FF671F;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 14px;
+        border-radius: 12px;
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 103, 31, 0.3);
+    }
+    .btn-reset:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(255, 103, 31, 0.4); }
+
+    /* Custom Alert for Status Message */
+    .alert-success-custom {
+        background-color: #e8f5e9; /* Light green */
+        color: #2e7d32; /* Dark green text */
+        border: 1px solid #a5d6a7;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+    }
+
+    .back-to-login {
+        display: block;
+        margin-top: 1.5rem;
+        color: #606770;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    .back-to-login:hover {
+        color: #FF671F;
+        text-decoration: underline;
+    }
+
+    /* Footer */
+    .reset-footer {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+        color: #8a8d91;
+        font-size: 0.9rem;
+        z-index: 3;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .main-content-login {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 90vh;
+        background-color: #f0f2f5;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* --- Animated Background Shapes --- */
+    .shape-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+    .shape-bg .shape {
+        position: absolute;
+        list-style: none;
+        display: block;
+        background-color: rgba(255, 103, 31, 0.15);
+        /* FASTER ANIMATION: Default duration reduced from 20s to 12s */
+        animation: animateShapes 12s linear infinite;
+        bottom: -200px;
+    }
+
+    /* Different sizes and delays for a random effect */
+    .shape-bg .shape1 { left: 10%; width: 80px; height: 80px; animation-delay: 0s; }
+    /* FASTER: Duration reduced from 17s to 9s */
+    .shape-bg .shape2 { left: 20%; width: 30px; height: 30px; animation-delay: 1s; animation-duration: 9s; }
+    .shape-bg .shape3 { left: 25%; width: 100px; height: 100px; animation-delay: 3s; }
+    /* FASTER: Duration reduced from 22s to 14s */
+    .shape-bg .shape4 { left: 40%; width: 150px; height: 150px; animation-delay: 0s; animation-duration: 14s; }
+    .shape-bg .shape5 { left: 65%; width: 40px; height: 40px; animation-delay: 0s; }
+    .shape-bg .shape6 { left: 75%; width: 110px; height: 110px; animation-delay: 2s; }
+    /* FASTER: Duration reduced from 25s to 15s */
+    .shape-bg .shape7 { left: 90%; width: 120px; height: 120px; animation-delay: 5s; animation-duration: 15s; }
+
+    /* The animation keyframes */
+    @keyframes animateShapes {
+        0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 1;
+            border-radius: 20%;
+        }
+        100% {
+            transform: translateY(-1200px) rotate(720deg);
+            opacity: 0;
+            border-radius: 50%;
+        }
+    }
+
+    /* --- Login Form Container --- */
+    .login-container {
+        width: 100%;
+        max-width: 420px;
+        background: #ffffff;
+        padding: 40px 30px;
+        border-radius: 24px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        z-index: 2;
+        text-align: center;
+        border: 1px solid #e8e8e8;
+        animation: fadeIn 0.8s ease-in-out;
+        margin-bottom: 40px;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-container .logo {
+        color: #FF671F;
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .login-container h4 {
+        color: #1c1e21;
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+    }
+
+    .login-container p.subtitle {
+        color: #606770;
+        margin-bottom: 2rem;
+    }
+
+    /* Form Styles */
+    .form-label {
+        color: #333;
+        font-weight: 600;
+        text-align: left;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        background: #f0f2f5;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        color: #1c1e21;
+        height: 50px;
+        padding: 0 15px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-control:focus {
+        background: #fff;
+        border-color: #FF671F;
+        box-shadow: 0 0 0 3px rgba(255, 103, 31, 0.2);
+    }
+
+    .btn-login {
+        background: #FF671F;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 14px;
+        border-radius: 12px;
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 103, 31, 0.3);
+    }
+
+
+
+    .form-check-label, .forgot-password {
+        color: #606770;
+        font-size: 0.9rem;
+    }
+
+    .form-check-input:checked {
+        background-color: #FF671F;
+        border-color: #FF671F;
+    }
+
+    .forgot-password {
+        text-decoration: none;
+    }
+    .forgot-password:hover {
+        color: #FF671F;
+        text-decoration: underline;
+    }
+
+    /* Footer */
+    .login-footer {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+        color: #8a8d91;
+        font-size: 0.9rem;
+        z-index: 3;
+    }

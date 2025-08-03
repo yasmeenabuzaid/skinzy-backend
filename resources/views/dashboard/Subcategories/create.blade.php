@@ -35,13 +35,10 @@
                         <label for="exampleInputName1" class="form-label">Name</label>
                         <input type="text" class="form-control" id="name" placeholder="Name" name="name" value="{{ old('name') }}" required>
                       </div>
-
                       <div class="col-12">
-                            <label for="image" class="form-label">Choose Sub Category Image</label>
-                            <input type="file" name="image" id="image" class="form-control">
+                        <label for="exampleInputName1" class="form-label">Name In Arabic</label>
+                        <input type="text" class="form-control" id="name_ar" placeholder="Name" name="name_ar" value="{{ old('name_ar') }}" required>
                       </div>
-
-
 
                       <div class="col-12">
                         <label for="exampleSelectGender" class="form-label">Category name</label>
@@ -55,7 +52,7 @@
                       </div>
 
                       <div class="text-end">
-                      <button type="submit" class="btn btn-info">Create</button>
+                      <button type="submit" class="btn btn-primary">Create</button>
                       <a href="{{route('subCategories.index')}}" class="btn btn-secondary">Cancel</a>
                       </div>
                     </form>

@@ -65,8 +65,8 @@
                         <tr>
                           <th>Id</th>
                           <th>Name</th>
+                          <th>Arabic Name</th>
                           <th>Category name</th>
-                          <th>Image</th>
                           <th>Action</th>
                         </tr>
                       </thead>
@@ -75,29 +75,12 @@
                         <tr>
                           <td>{{$Subcategory->id}}</td>
                           <td title="view">
-                            <a href="#"
-                            class="view-subcategory"
-                            data-bs-toggle="modal"
-                            data-bs-target="#subcategoryDetailsModal"
-                            data-name="{{ $Subcategory->name }}"
-                            data-image="{{ asset('uploads/subcategory/' . $Subcategory->image) }}"
-                            data-category="{{ $Subcategory->category->name }}"
-                            data-discount="{{ $Subcategory->discount ?? 'No discount available' }}"
-                            style="color:#000000;"
-                            onmouseover="this.style.color='#10db8c';"
-                            onmouseout="this.style.color='#000000';">
-                             {{$Subcategory->name}}
-                         </a>
+                         {{$Subcategory->name}}
+
                             </td>
+                            <td>{{$Subcategory->name_ar}}</td>
                             <td>{{$Subcategory->category->name}}</td>
 
-                          <td>
-                          @if($Subcategory->image)
-
-                            <img src="{{ asset('uploads/subcategory/' . $Subcategory->image) }}" alt=" Sub Category Image" style="width: 50px; height: 40px;"></td>
-                          @else
-                              <span> - </span>
-                          @endif
 
 
                           <td>
@@ -107,16 +90,16 @@
 
 
                           <a href="{{ route('subCategories.edit', $Subcategory->id) }}"  title="Edit">
-                          <button type="button" class="btn btn-outline-info btn-sm">
-                            <i class="bi bi-pencil"></i> Edit
+                          <button type="button" class="btn btn-primary">
+                            <i class="bi bi-pencil"></i>
                         </button>
                           </a>
 
                           <form action="{{ route('subCategories.destroy', $Subcategory->id) }}" method="POST" style="display:inline;" title="Delete">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="button" class="btn btn-outline-danger btn-sm"  onclick="confirmDeletion(event, '{{ route('subCategories.destroy', $Subcategory->id) }}')">
-                                                    <i class="bi bi-trash"></i> Delete
+                                                <button type="button" class="btn btn-danger"  onclick="confirmDeletion(event, '{{ route('subCategories.destroy', $Subcategory->id) }}')">
+                                                    <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
 

@@ -34,6 +34,10 @@
                         <label for="exampleInputName1" class="form-label">Name</label>
                         <input type="text" class="form-control" id="name" placeholder="Name" name="name" value="{{$subCategory->name}}" required>
                       </div>
+                      <div class="col-12">
+                        <label for="exampleInputName1" class="form-label">Name In Arabic</label>
+                        <input type="text" class="form-control" id="name_ar" placeholder="name_ar" name="name_ar" value="{{$subCategory->name_ar}}" required>
+                      </div>
 
                       <div class="col-12">
                         <label for="exampleSelectGender" class="form-label">Category name</label>
@@ -45,28 +49,13 @@
                         </select>
                       </div>
 
-                      <div class="col-12">
-                    <label for="image" class="form-label">Current image</label><br>
-                    @if($subCategory->image)
-                        <img src="{{ asset('uploads/subcategory/' . $subCategory->image) }}" alt="Category image" style="width: 100px;">
-                    @else
-                        <span>No image available</span>
-                    @endif
-                </div>
 
-                      <div class="col-12">
-                            <label for="image" class="form-label">Upload new image</label>
-                            <input type="file" name="image" id="image" class="form-control">
-                      </div>
 
-                      <div class="col-12">
-                        <label for="exampleInputName1" class="form-label">Discount (%)</label>
-                        <input type="number" class="form-control" id="discount" placeholder="Discount" name="discount" value="{{$subCategory->discount}}" >
-                      </div>
+
 
 
                       <div class="text-end">
-                      <button type="button" id="editButton" class="btn btn-info">Edit</button>
+                      <button type="button" id="editButton" class="btn btn-primary">Save</button>
                       <a href="{{route('subCategories.index')}}" class="btn btn-secondary">Cancel</a>
                       </div>
                     </form>
@@ -78,7 +67,7 @@
               <div id="confirmationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center;">
                 <div style="background: #fff; padding: 20px; border-radius: 5px; text-align: center;">
                     <h5>Are you sure you want to edit this sub category?</h5>
-                    <button id="confirmButton" class="btn btn-info btn-fw">Edit</button>
+                    <button id="confirmButton" class="btn btn-primary">Edit</button>
                     <button id="cancelButton" class="btn btn-secondary">Cancel</button>
                 </div>
             </div>

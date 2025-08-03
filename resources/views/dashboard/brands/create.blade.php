@@ -37,7 +37,7 @@
       </div>
 
       <div class="text-end">
-        <button type="submit" class="btn btn-info">Create</button>
+        <button type="submit" class="btn btn-primary">Save</button>
         <a href="{{ route('brands.index') }}" class="btn btn-secondary">Cancel</a>
       </div>
     </form>

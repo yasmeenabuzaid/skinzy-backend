@@ -11,24 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-     Schema::create('product_details', function (Blueprint $table) {
-    $table->id();
-    $table->unsignedBigInteger('product_id')->nullable();
-    $table->string('brand')->nullable();
-    $table->string('shade')->nullable();
-    $table->enum('finish', ['matte', 'glossy', 'satin', 'shimmer'])->nullable();
-    $table->enum('skin_type', ['oily', 'dry', 'combination', 'sensitive'])->nullable();
-    $table->text('ingredients')->nullable();
-    $table->string('volume')->nullable();
-    $table->text('usage_instructions')->nullable();
+        Schema::create('specifications', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('product_id')->nullable();
 
-    $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-      $table->timestamps();
-});
+            $table->string('key')->nullable();
+            $table->string('key_ar')->nullable();
 
+            $table->string('value')->nullable();
+            $table->string('value_ar')->nullable();
 
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
 
-
+            $table->timestamps();
+        });
     }
 
     /**
@@ -36,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_details');
+        Schema::dropIfExists('specifications');
     }
 };

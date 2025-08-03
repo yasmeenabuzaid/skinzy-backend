@@ -726,6 +726,9 @@ html, body {
     box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
     /* border: 1px solid #878787; */
     background-color: rgb(41, 41, 41);
+     overflow-y: auto;
+    scrollbar-width: none;         /* Firefox */
+    -ms-overflow-style: none;      /* IE 10+ */
   }
 
   .sidebar .nav-link.active {
@@ -820,65 +823,7 @@ html, body {
     color: #a6a6a6;
   }
 
-  .sidebar-nav .nav-link.collapsed {
-    color: #a6a6a6;
-    background: rgb(41, 41, 41);
-  }
 
-  .sidebar-nav .nav-link.collapsed i {
-    color: #a6a6a6;
-  }
-
-  .sidebar-nav .nav-link:hover {
-    color: #FF671F;
-    background: rgb(63, 63, 63);
-  }
-
-  .sidebar-nav .nav-link:hover i {
-    color: #FF671F;
-  }
-
-  .sidebar-nav .nav-link .bi-chevron-down {
-    margin-right: 0;
-    transition: transform 0.2s ease-in-out;
-  }
-
-  .sidebar-nav .nav-link:not(.collapsed) .bi-chevron-down {
-    transform: rotate(180deg);
-  }
-
-  .sidebar-nav .nav-content {
-    padding: 5px 0 0 0;
-    margin: 0;
-    list-style: none;
-  }
-
-  .sidebar-nav .nav-content a {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    font-weight: 600;
-    color: #a6a6a6;
-    transition: 0.3;
-    padding: 10px 0 10px 40px;
-    transition: 0.3s;
-  }
-
-  .sidebar-nav .nav-content a i {
-    font-size: 6px;
-    margin-right: 8px;
-    line-height: 0;
-    border-radius: 50%;
-  }
-
-  .sidebar-nav .nav-content a:hover,
-  .sidebar-nav .nav-content a.active {
-    color: #db1010;
-  }
-
-  .sidebar-nav .nav-content a.active i {
-    background-color: #4154f1;
-  }
 
   /*--------------------------------------------------------------
   # Dashboard
@@ -1359,3 +1304,561 @@ html, body {
     max-width: 600px;
     height: auto;
   }
+
+
+:root {
+    --primary-color: #FF671F;
+    --sidebar-bg: #191c24; /* Premium dark background */
+    --sidebar-text: #aeb1b7; /* Softer text color */
+    --sidebar-text-active: #ffffff;
+    --sidebar-hover-bg: #2d313a;
+}
+
+/* --- Main Sidebar Container --- */
+.sidebar {
+    background-color: var(--sidebar-bg) !important;
+    font-family: "Poppins", sans-serif;
+    padding: 15px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.1); /* Softer shadow */
+}
+
+/* --- Logo Container --- */
+.sidebar .logo-container {
+    padding: 15px 10px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.sidebar .logo-img {
+    max-height: 45px;
+    width: auto;
+    transition: all 0.3s ease;
+}
+
+/* --- General Navigation Links --- */
+.sidebar-nav .nav-link {
+    background: transparent;
+    padding: 12px 15px;
+    color: var(--sidebar-text);
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 15px;
+    border-left: 3px solid transparent; /* Placeholder for active indicator */
+    transition: all 0.3s ease;
+}
+
+.sidebar-nav .nav-link i {
+    color: var(--sidebar-text);
+    font-size: 18px;
+    margin-right: 12px;
+    transition: color 0.3s ease;
+}
+
+/* --- Link Hover State --- */
+.sidebar-nav .nav-link:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--sidebar-text-active);
+}
+
+.sidebar-nav .nav-link:hover i {
+    color: var(--sidebar-text-active);
+}
+
+/* --- Link Active State --- */
+.sidebar-nav .nav-link.active {
+    color: var(--sidebar-text-active);
+    background-color: transparent;
+    border-left-color: var(--primary-color);
+}
+
+.sidebar-nav .nav-link.active i {
+    color: var(--primary-color);
+}
+
+/* --- Navigation Heading --- */
+.sidebar-nav .nav-heading {
+    color: #6c757d;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 25px 0 10px 15px;
+}
+/*
+=================================================================
+   CUSTOM STYLES FOR SKINZY CARE ADMIN PANEL
+   Version: 1.0
+   This file combines all design improvements for a modern look.
+=================================================================
+*/
+
+/* --- 1. General & Variables --- */
+:root {
+    --primary-color: #FF671F;
+    --primary-hover: #E65C19;
+    --danger-color: #dc3545;
+    --danger-hover: #c82333;
+
+    --sidebar-bg: #191c24;
+    --sidebar-text: #aeb1b7;
+    --sidebar-text-active: #ffffff;
+    --sidebar-hover-bg: #2d313a;
+
+    --body-bg: #f7f8fc;
+    --card-bg: #ffffff;
+    --heading-color: #012970;
+    --text-color: #444444;
+    --secondary-text: #495057;
+    --secondary-border: #ced4da;
+    --secondary-hover-bg: #f8f9fa;
+}
+
+body {
+    font-family: "Poppins", sans-serif !important;
+    background: var(--body-bg);
+    color: var(--text-color);
+}
+
+a {
+    color: var(--primary-color);
+}
+
+a:hover {
+    color: var(--primary-hover);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Poppins", sans-serif !important;
+}
+
+#main {
+    padding: 20px 30px;
+}
+
+/* --- 2. Sidebar --- */
+.sidebar {
+    background-color: var(--sidebar-bg) !important;
+    padding: 15px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.1);
+}
+
+.sidebar .logo-container {
+    padding: 15px 10px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.sidebar .logo-img {
+    max-height: 45px;
+    width: auto;
+    transition: all 0.3s ease;
+}
+
+.sidebar-nav .nav-link {
+    background: transparent;
+    padding: 12px 15px;
+    color: var(--sidebar-text);
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 15px;
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.sidebar-nav .nav-link i {
+    color: var(--sidebar-text);
+    font-size: 18px;
+    margin-right: 12px;
+    transition: color 0.3s ease;
+}
+
+.sidebar-nav .nav-link:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--sidebar-text-active);
+}
+
+.sidebar-nav .nav-link:hover i {
+    color: var(--sidebar-text-active);
+}
+
+.sidebar-nav .nav-link.active {
+    color: var(--sidebar-text-active);
+    background-color: transparent;
+    border-left-color: var(--primary-color);
+}
+
+.sidebar-nav .nav-link.active i {
+    color: var(--primary-color);
+}
+
+.sidebar-nav .nav-heading {
+    color: #6c757d;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 25px 0 10px 15px;
+}
+
+/* --- 3. Dashboard & General Cards --- */
+.card {
+    border-radius: 16px;
+    box-shadow: 0px 5px 20px rgba(1, 41, 112, 0.08);
+    border: none;
+}
+
+.pagetitle h1 {
+    color: var(--heading-color);
+    font-weight: 700;
+}
+
+/* Animation for dashboard elements */
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard .animated-item {
+    animation: slideUpFade 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.dashboard .row > .animated-item:nth-child(1) { animation-delay: 0.1s; }
+.dashboard .row > .animated-item:nth-child(2) { animation-delay: 0.2s; }
+.dashboard .row > .animated-item:nth-child(3) { animation-delay: 0.3s; }
+.dashboard .animated-item-report { animation-delay: 0.4s; }
+.dashboard .animated-item-traffic { animation-delay: 0.5s; }
+
+/* Redesigned Stat Cards */
+.stat-card {
+    border-radius: 16px;
+    color: #fff;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 30px;
+    transition: all 0.3s ease;
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.stat-card .card-body { padding: 0; position: relative; z-index: 2; }
+.stat-card .card-title { color: rgba(255, 255, 255, 0.9); font-weight: 500; margin-bottom: 8px; font-size: 1rem; }
+.stat-card .card-value { font-size: 2.25rem; font-weight: 700; }
+.stat-card .card-icon-bg { position: absolute; right: -20px; bottom: -30px; font-size: 7rem; opacity: 0.2; transform: rotate(-15deg); z-index: 1; color: #fff; }
+
+.users-card { background: linear-gradient(45deg, #FF671F, #FF8C4B); }
+.orders-card { background: linear-gradient(45deg, #0d6efd, #5c97e8); }
+.products-card { background: linear-gradient(45deg, #198754, #28a745); }
+
+/* --- 4. Button System --- */
+.btn {
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    border-radius: 8px;
+    padding: 10px 24px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Primary Button */
+.btn-primary, .btn-dark, .btn-success {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: #fff !important;
+}
+
+.btn-primary:hover, .btn-dark:hover, .btn-success:hover {
+    background-color: var(--primary-hover) !important;
+    border-color: var(--primary-hover) !important;
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background-color: #fff !important;
+    border-color: var(--secondary-border) !important;
+    color: var(--secondary-text) !important;
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary-hover-bg) !important;
+    border-color: #adb5bd !important;
+    color: var(--primary-color) !important;
+}
+
+/* Danger Button */
+.btn-danger {
+    background-color: var(--danger-color) !important;
+    border-color: var(--danger-color) !important;
+    color: #fff !important;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-hover) !important;
+    border-color: var(--danger-hover) !important;
+}
+
+/* Info Button */
+.btn-info {
+    background-color: #0dcaf0 !important;
+    border-color: #0dcaf0 !important;
+    color: #fff !important;
+}
+.btn-info:hover {
+    background-color: #0b9fb9 !important;
+    border-color: #0b9fb9 !important;
+}
+
+/* Sizing */
+.btn-sm {
+    padding: 8px 18px;
+    font-size: 13px;
+}
+
+.btn-lg {
+    padding: 12px 30px;
+    font-size: 16px;
+}
+/*
+=================================================================
+   Final Custom Styles for Admin Panel
+   Version: 2.0
+   This file provides a complete and cohesive design overhaul.
+=================================================================
+*/
+
+/* --- 1. Global Variables & Base Styles --- */
+:root {
+    --primary-color: #FF671F;
+    --primary-hover: #E65C19;
+    --danger-color: #e74c3c;
+    --danger-hover: #c0392b;
+    --success-color: #27ae60;
+    --info-color: #3498db;
+
+    --sidebar-bg: #1e222d;
+    --sidebar-text: #aeb1b7;
+    --sidebar-text-active: #ffffff;
+    --sidebar-hover-bg: #282c37;
+
+    --body-bg: #f9fafb;
+    --card-bg: #ffffff;
+    --heading-color: #1e222d;
+    --text-color: #5a6169;
+    --border-color: #eef2f7;
+
+    --secondary-text: #495057;
+    --secondary-border: #ced4da;
+    --secondary-hover-bg: #f8f9fa;
+}
+
+body {
+    font-family: "Poppins", sans-serif !important;
+    background: var(--body-bg);
+    color: var(--text-color);
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--primary-hover);
+}
+
+h1, h2, h3, h4, h5, h6, .card-title {
+    font-family: "Poppins", sans-serif !important;
+    font-weight: 600;
+    color: var(--heading-color);
+}
+
+#main {
+    padding: 25px 30px;
+}
+
+
+/* --- 2. Sidebar --- */
+.sidebar {
+    background-color: var(--sidebar-bg) !important;
+    padding: 15px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.1);
+    border-right: 1px solid var(--border-color);
+}
+
+.sidebar .logo-container {
+    padding: 15px 10px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.sidebar .logo-img {
+    max-height: 45px;
+    width: auto;
+    transition: all 0.3s ease;
+}
+
+.sidebar-nav .nav-link {
+    background: transparent;
+    padding: 12px 15px;
+    color: var(--sidebar-text);
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 15px;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease-in-out;
+}
+
+.sidebar-nav .nav-link i {
+    color: var(--sidebar-text);
+    font-size: 18px;
+    margin-right: 12px;
+    transition: color 0.2s ease-in-out;
+}
+
+.sidebar-nav .nav-link:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--sidebar-text-active);
+}
+
+.sidebar-nav .nav-link:hover i {
+    color: var(--sidebar-text-active);
+}
+
+.sidebar-nav .nav-link.active {
+    color: var(--sidebar-text-active);
+    background-color: transparent;
+    border-left-color: var(--primary-color);
+}
+
+.sidebar-nav .nav-link.active i {
+    color: var(--primary-color);
+}
+
+.sidebar-nav .nav-heading {
+    color: #6c757d;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 25px 0 10px 15px;
+}
+
+/* --- 3. Main Content Area --- */
+.card {
+    border-radius: 12px;
+    box-shadow: 0px 5px 20px rgba(20, 23, 28, 0.05);
+    border: 1px solid var(--border-color);
+}
+
+.pagetitle h1 {
+    font-weight: 700;
+}
+
+/* Page Header & Breadcrumb */
+.page-header .page-title {
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+.breadcrumb {
+    background-color: transparent;
+    padding: 0;
+}
+.breadcrumb-item a {
+    color: var(--primary-color);
+}
+.breadcrumb-item.active {
+    color: var(--text-color);
+}
+
+/* Custom Table Design */
+.table thead th {
+    background-color: #f9fafb;
+    color: var(--heading-color);
+    border-bottom: 2px solid var(--border-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 13px;
+    padding: 1rem;
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    color: var(--text-color);
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* --- 4. Button System --- */
+.btn {
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    border-radius: 8px;
+    padding: 10px 24px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Primary Button */
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: #fff !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover) !important;
+    border-color: var(--primary-hover) !important;
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background-color: var(--card-bg) !important;
+    border-color: var(--secondary-border) !important;
+    color: var(--secondary-text) !important;
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary-hover-bg) !important;
+    border-color: #adb5bd !important;
+    color: var(--primary-color) !important;
+}
+
+/* Danger Button */
+.btn-danger {
+    background-color: var(--danger-color) !important;
+    border-color: var(--danger-color) !important;
+    color: #fff !important;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-hover) !important;
+    border-color: var(--danger-hover) !important;
+}
+
+/* Sizing */
+.btn-sm {
+    padding: 8px 18px;
+    font-size: 13px;
+}

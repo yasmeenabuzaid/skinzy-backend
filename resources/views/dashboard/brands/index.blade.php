@@ -79,16 +79,16 @@
                 </td>
                 <td>
                   <a href="{{ route('brands.edit', $brand->id) }}" title="Edit">
-                    <button type="button" class="btn btn-outline-info btn-sm">
-                      <i class="bi bi-pencil"></i> Edit
+                    <button type="button" class="btn  btn-primary">
+                      <i class="bi bi-pencil"></i>
                     </button>
                   </a>
 
                   <form action="{{ route('brands.destroy', $brand->id) }}" method="POST" style="display:inline;" title="Delete">
                     @csrf
                     @method('DELETE')
-                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDeletion(event, '{{ route('brands.destroy', $brand->id) }}')">
-                      <i class="bi bi-trash"></i> Delete
+                    <button type="button" class="btn btn-danger" onclick="confirmDeletion(event, '{{ route('brands.destroy', $brand->id) }}')">
+                      <i class="bi bi-trash"></i>
                     </button>
                   </form>
                 </td>

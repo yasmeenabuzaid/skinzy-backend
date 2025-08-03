@@ -78,29 +78,30 @@ public function store(Request $request)
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Brand $brand)
-    {
-        $validation = $request->validate([
-            'name' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
+public function update(Request $request, Brand $brand)
+{
+    $validation = $request->validate([
+        'name' => 'required|string',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
 
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $path = public_path('uploads/brand/');
-            $file->move($path, $filename);
-        } else {
-            $filename = $brand->image;
-        }
+    $imageUrl = $brand->image; 
 
-        $brand->update([
-            'name' => $request->input('name'),
-            'image' => $filename,
-        ]);
+    if ($request->hasFile('image')) {
+        $file = $request->file('image');
 
-        return to_route('brands.index')->with('success', 'Brand updated successfully');
+        $uploadResult = Cloudinary::upload($file->getRealPath());
+
+        $imageUrl = $uploadResult->getSecurePath();
     }
+
+    $brand->update([
+        'name' => $request->input('name'),
+        'image' => $imageUrl,
+    ]);
+
+    return to_route('brands.index')->with('success', 'Brand updated successfully');
+}
 
     /**
      * Remove the specified resource from storage.

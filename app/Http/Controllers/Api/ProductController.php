@@ -27,7 +27,7 @@ class ProductController extends Controller
 
         $products = Product::with('images')
             ->where('sub_category_id', $subcategoryId)
-            ->where('isActive', 1)
+            ->where('isDelete', 0)
             ->where('type', 'main')
             ->get();
 
@@ -55,13 +55,13 @@ public function getProductsByBrand($brandId)
     {
         $product = Product::with([
             'images',
-            'details',
+            'specifications',
             'variations.images',
-            'variations.details',
+            'variations.specifications',
             'parentProduct.images',
-            'parentProduct.details',
+            'parentProduct.specifications',
             'parentProduct.variations.images',
-            'parentProduct.variations.details',
+            'parentProduct.variations.specifications',
         ])->where('id', $id)->first();
 
         if (!$product) {

@@ -1,11 +1,10 @@
 <?php
-
-
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\SubCategoryController;
 use App\Http\Controllers\Api\FavoriteController;
+
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\Auth\ApiRegisterController;
@@ -16,22 +15,23 @@ Route::prefix('e-commerce/customer')->group(function () {
     Route::post('/auth/login', [ApiLoginController::class, 'login']);
 
     Route::get('/products', [ProductController::class, 'index']);
-Route::get('/products/{subcategoryId}', [ProductController::class, 'getProductsBySubCategory']);
+    Route::get('/products/subcategory/{subcategoryId}', [ProductController::class, 'getProductsBySubCategory']);
+    Route::get('/products/category/{CategoryId}', [CategoryController::class, 'productsByCategory']); // هذا المسار الجديد
     Route::get('/single-products/{id}', [ProductController::class, 'show']);
     Route::get('/categories', [CategoryController::class, 'index']);
-Route::get('/products/brand/{brandId}', [ProductController::class, 'getProductsByBrand']);
+    Route::get('/products/brand/{brandId}', [ProductController::class, 'getProductsByBrand']);
 
     Route::get('/subcategories', [SubCategoryController::class, 'getWithSubcategories']);
     Route::get('/brands', [BrandController::class, 'index']);
     Route::post('/favorites', [FavoriteController::class, 'store']);
-    Route::get('/favorites/{user_id}', [FavoriteController::class, 'index']);
+    Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::delete('/favorites', [FavoriteController::class, 'destroy']);
-    Route::get('/cities', [OrderController::class, 'getCities']);  // تأكد أن الراوت محمي هنا
+    Route::get('/cities', [OrderController::class, 'getCities']);
 });
 
 Route::middleware('auth:sanctum')->prefix('e-commerce/customer')->group(function () {
-    Route::post('/cart', [CartController::class, 'addToCart']);  // تأكد أن الراوت محمي هنا
-    Route::get('/cart', [CartController::class, 'getCart']);  // تأكد أن الراوت محمي هنا
+    Route::post('/cart', [CartController::class, 'addToCart']);
+    Route::get('/cart', [CartController::class, 'getCart']);
     Route::patch('/cart', [CartController::class, 'updateCart']);
     Route::patch('/cart/update', [CartController::class, 'updateCartq']);
 
@@ -40,4 +40,3 @@ Route::middleware('auth:sanctum')->prefix('e-commerce/customer')->group(function
     Route::post('/addresses', [OrderController::class, 'addAddress']);
     Route::post('/orders/checkout', [OrderController::class, 'createOrder']);
 });
-
