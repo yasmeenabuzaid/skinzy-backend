@@ -15,7 +15,7 @@ public function store(Request $request)
         'product_id' => 'required|exists:products,id',
     ]);
 
-    $user = Auth::guard('sanctum')->user(); // أو auth()->user()
+    $user = Auth::guard('sanctum')->user(); 
     if (!$user) {
         return response()->json(['message' => 'User not authenticated'], 401);
     }
@@ -33,13 +33,12 @@ public function index()
 {
     $user = Auth::guard('sanctum')->user();
     if (!$user) {
-        // Return a clear message to the user indicating they need to login
         return response()->json([
             'message' => 'You must be logged in to view favorites'
         ], 401);
     }
 
-    $favorites = Favorite::with('product')->where('user_id', $user->id)->get();
+    $favorites = Favorite::with(['product.images'])->where('user_id', $user->id)->get();
 
     return response()->json($favorites);
 }

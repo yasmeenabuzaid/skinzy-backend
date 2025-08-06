@@ -4,13 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Models\ProductImage;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with(['images'])
+        $products = Product::with(['images', 'subCategory'])
             ->where('type', 'main')
             ->get();
 
@@ -25,7 +24,7 @@ class ProductController extends Controller
             ], 400);
         }
 
-        $products = Product::with('images')
+        $products = Product::with(['images', 'subCategory'])
             ->where('sub_category_id', $subcategoryId)
             ->where('isDelete', 0)
             ->where('type', 'main')
@@ -34,22 +33,21 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
-public function getProductsByBrand($brandId)
-{
-    if (!$brandId) {
-        return response()->json([
-            'error' => 'brand_id parameter is required'
-        ], 400);
+    public function getProductsByBrand($brandId)
+    {
+        if (!$brandId) {
+            return response()->json([
+                'error' => 'brand_id parameter is required'
+            ], 400);
+        }
+
+        $products = Product::with(['images', 'subCategory'])
+            ->where('brand_id', $brandId)
+            ->where('type', 'main')
+            ->get();
+
+        return response()->json($products);
     }
-
-    $products = Product::with('images')
-        ->where('brand_id', $brandId)
-        ->get();
-
-    return response()->json($products);
-}
-
-
 
     public function show($id)
     {
@@ -62,6 +60,7 @@ public function getProductsByBrand($brandId)
             'parentProduct.specifications',
             'parentProduct.variations.images',
             'parentProduct.variations.specifications',
+            'subCategory',
         ])->where('id', $id)->first();
 
         if (!$product) {

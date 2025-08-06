@@ -57,13 +57,14 @@
                                         <td>{{ $product->id }}</td>
                                         <td>{{ $product->name }}</td>
                                         <td>{{ $product->name_ar }}</td>
-                                        <td>
-                                            @if ($product->image)
-                                                <img src="{{ asset($product->image) }}" alt="Product Image" style="width: 50px; height: 40px;">
-                                            @else
-                                                <span>-</span>
-                                            @endif
-                                        </td>
+                                       <td>
+    @if($product->images->isNotEmpty())
+        <img src="{{ asset($product->images->first()->image) }}" alt="Product Image" style="width:50px; height:40px;">
+    @else
+        <span>-</span>
+    @endif
+</td>
+
                                         <td>{{ $product->price }}</td>
                                         <td>
                                             <form action="{{ route('products.restore', $product->id) }}" method="POST" style="display:inline;">
