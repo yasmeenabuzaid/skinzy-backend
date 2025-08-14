@@ -38,7 +38,63 @@ public function index(Request $request)
 }
 
 
+  public function bulkCreate()
+    {
+        $subCategories = SubCategory::where('isDelete', false)->get();
+        $brands = Brand::all();
 
+        return view('dashboard.products.bulk-create', [
+            'subCategories' => $subCategories,
+            'brands' => $brands,
+        ]);
+    }
+
+    /**
+     * Store multiple newly created products in storage.
+     */
+    public function bulkStore(Request $request)
+    {
+        // 1. Validate the incoming array of products
+        $validated = $request->validate([
+            'products' => 'required|array',
+            'products.*.name' => 'required|string',
+            'products.*.name_ar' => 'required|string',
+            'products.*.price' => 'required|numeric',
+            'products.*.sub_category_id' => 'required|exists:sub_categories,id',
+            // Add other necessary validations for each field
+        ]);
+
+        // 2. Use a Database Transaction for safety
+        try {
+            DB::transaction(function () use ($validated) {
+                foreach ($validated['products'] as $productData) {
+                    // Create the main product
+                    $product = Product::create([
+                        'name' => $productData['name'],
+                        'name_ar' => $productData['name_ar'],
+                        'price' => $productData['price'],
+                        'sub_category_id' => $productData['sub_category_id'],
+                        'small_description' => $productData['small_description'] ?? '',
+                        'small_description_ar' => $productData['small_description_ar'] ?? '',
+                        'description' => $productData['description'] ?? '',
+                        'description_ar' => $productData['description_ar'] ?? '',
+                        'price_after_discount' => $productData['price_after_discount'] ?? null,
+                        'brand_id' => $productData['brand_id'] ?? null,
+                        'code' => $productData['code'] ?? null,
+                        'type' => 'main', // Assuming all are main products
+                    ]);
+
+                    // Note: Handling file uploads in bulk forms is complex.
+                    // This logic assumes you will handle it or that it's not needed for the bulk form.
+                }
+            });
+        } catch (\Exception $e) {
+            \Log::error('Bulk Store Failed: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred while saving the products.');
+        }
+
+        return to_route('products.index')->with('success', 'Products created successfully!');
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -58,6 +114,7 @@ public function store(Request $request)
 {
     $validation = $request->validate([
         'name' => 'required|string',
+        'code' => 'nullable|string',
         'name_ar' => 'required|string',
         'small_description' => 'required|string',
         'small_description_ar' => 'required|string',
@@ -65,7 +122,7 @@ public function store(Request $request)
         'description_ar' => 'required',
         'price_after_discount' => 'nullable|numeric',
         'price' => 'required|numeric',
-        'quantity' => 'required|integer|min:1',
+        // 'quantity' => 'required|integer|min:1',
         'image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,WEBP,AVIF|max:2048',
         'sub_category_id' => 'required|exists:categories,id',
         'brand_id' => 'required|exists:brands,id',
@@ -83,6 +140,7 @@ public function store(Request $request)
 
     $product = Product::create([
         'name' => $request->name,
+        'code' => $request->code,
         'name_ar' => $request->name_ar,
         'small_description' => $request->small_description,
         'small_description_ar' => $request->small_description_ar,
@@ -90,7 +148,7 @@ public function store(Request $request)
         'description_ar' => $request->description_ar,
         'price' => $request->price,
         'price_after_discount' => $request->price_after_discount,
-        'quantity' => $request->quantity,
+        // 'quantity' => $request->quantity,
         'sub_category_id' => $request->sub_category_id,
         'brand_id' => $request->brand_id,
         'type' => $request->type,
@@ -158,65 +216,6 @@ public function show(Product $product)
 
 
 
-  public function show_user_side($id)
-{
-    // $product = Product::findOrFail($id);
-
-$product = Product::with('product_images')->find($id);
-
-if ($product->type == 'main') {
-    // المنتج هو Main => جلب الفاريشنز المرتبطة فقط
-    $variations = Product::where('parent_product_id', $product->id)->with('product_images')->get();
-    $mainProduct = $product; // المنتج نفسه
-} else {
-    // المنتج هو Variation => جلب المنتج الرئيسي + كل الفاريشنز المرتبطة به
-    $mainProduct = Product::where('id', $product->parent_product_id)->with('product_images')->first();
-    $variations = Product::where('parent_product_id', $mainProduct->id)->with('product_images')->get();
-}
-
-
-    $feedbacks = Feedback::where('product_id', $product->id)->get();
-
-    $totalFeedbacks = $feedbacks->count();
-    $averageRating = $feedbacks->avg('rating');
-
-    $product_details = ProductDetail::where('product_id', $product->id)->first();
-
-    $allproducts = Product::with('product_images')
-        ->whereHas('feedbacks', function ($query) {
-            $query->havingRaw('AVG(rating) >= 3');
-        })
-        ->get();
-
-    if ($allproducts->isEmpty()) {
-        $allproducts = Product::with('product_images')->get();
-    }
-
-    $productImages = $product->product_images;
-
-    $relatedProducts = Product::where('subCategory_id', $product->subCategory_id)
-        ->where('id', '!=', $product->id)
-        ->inRandomOrder()
-        ->take(12)
-        ->get();
-
-    return view('single', [
-        'product' => $product,
-        'productImages' => $productImages,
-        'relatedProducts' => $relatedProducts,
-        'allproducts' => $allproducts,
-        'feedbacks' => $feedbacks,
-        'totalFeedbacks' => $totalFeedbacks,
-        'averageRating' => $averageRating,
-        'product_details' => $product_details,
-        'variations' => $variations,
-        'mainProduct'=>$mainProduct
-    ]);
-}
-
-
-
-
 
 
 
@@ -247,6 +246,8 @@ public function update(Request $request, Product $product)
 {
     $validation = $request->validate([
         'name_ar' => 'required|string',
+                'code' => 'nullable|string',
+
         'name' => 'required|string',
         'small_description' => 'required|string',
         'small_description_ar' => 'required|string',
@@ -254,7 +255,7 @@ public function update(Request $request, Product $product)
         'description_ar' => 'required',
         'price_after_discount' => 'nullable|numeric',
         'price' => 'required|numeric',
-        'quantity' => 'required|integer|min:1',
+        // 'quantity' => 'required|integer|min:1',
         'image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,WEBP,AVIF|max:2048',
         'sub_category_id' => 'required|exists:categories,id',
         'brand_id' => 'required|exists:brands,id',
@@ -267,6 +268,7 @@ public function update(Request $request, Product $product)
 
     $product->update([
         'name' => $request->input('name'),
+        'code' => $request->input('code'),
         'name_ar' => $request->input('name_ar'),
         'small_description' => $request->input('small_description'),
         'small_description_ar' => $request->input('small_description_ar'),
@@ -274,7 +276,7 @@ public function update(Request $request, Product $product)
         'description_ar' => $request->input('description_ar'),
         'price' => $request->input('price'),
         'price_after_discount' => $request->input('price_after_discount'),
-        'quantity' => $request->input('quantity'),
+        // 'quantity' => $request->input('quantity'),
         'sub_category_id' => $request->input('sub_category_id'),
         'brand_id' => $request->input('brand_id'),
     ]);
@@ -318,37 +320,6 @@ public function update(Request $request, Product $product)
 
 
 
-
-
-
-    public function productsBySubCategory($id, Request $request)
-    {
-
-        $subCategory = SubCategory::findOrFail($id);
-
-
-        $maxPrice = Product::where('subCategory_id', $id)->max('price');
-
-
-        $query = Product::with('product_images')->where('subCategory_id', $id);
-
-        if ($request->has('min_price') && $request->has('max_price')) {
-            $minPrice = $request->query('min_price', 0);
-            $maxPrice = $request->query('max_price', $maxPrice);
-
-            $query->where(function ($query) use ($minPrice, $maxPrice) {
-                $query->whereBetween('price', [$minPrice, $maxPrice])
-                      ->orWhere(function ($query) use ($minPrice, $maxPrice) {
-                          $query->whereRaw('price - (price * discount / 100) BETWEEN ? AND ?', [$minPrice, $maxPrice]);
-                      });
-            });
-        }
-
-
-        $products = $query->orderBy('name', 'asc')->paginate(16);
-
-        return view('store', compact('products', 'subCategory', 'maxPrice'));
-    }
 
 
 

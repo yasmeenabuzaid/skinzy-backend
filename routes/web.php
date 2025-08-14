@@ -17,6 +17,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\DeletedItemsController;
+use App\Http\Controllers\BulkEntryController; // سنقوم بإنشاء هذا
 
 
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +34,7 @@ use Illuminate\Support\Facades\Auth;
 */
 
 Auth::routes();
-
+Auth::routes(['verify' => true]);
 
 
 // <!--==========================================  (HOME)  ========================================================================================================================-->
@@ -152,3 +153,10 @@ Route::put('/deleted/products/{id}/restore', [DeletedItemsController::class, 're
 Route::delete('/deleted/categories/{id}/forceDelete', [DeletedItemsController::class, 'forceDeleteCategory'])->name('categories.forceDelete');
 Route::delete('/deleted/subCategories/{id}/forceDelete', [DeletedItemsController::class, 'forceDeleteSubCategory'])->name('subCategories.forceDelete');
 Route::delete('/deleted/products/{id}/forceDelete', [DeletedItemsController::class, 'forceDeleteProduct'])->name('products.forceDelete');
+
+    Route::get('/bulk-entry', [BulkEntryController::class, 'index'])->name('bulk.entry.index');
+
+ Route::post('/products/bulk-store', [ProductController::class, 'bulkStore'])->name('products.bulk.store');
+    Route::post('/categories/bulk-store', [CategoryController::class, 'bulkStore'])->name('categories.bulk.store');
+    Route::post('/subcategories/bulk-store', [SubCategoryController::class, 'bulkStore'])->name('subcategories.bulk.store');
+Route::post('/brands/bulk-store', [BrandController::class, 'bulkStore'])->name('brands.bulk.store');

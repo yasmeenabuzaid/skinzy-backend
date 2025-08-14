@@ -41,10 +41,11 @@
                             <h4 class="fw-normal text-muted mb-2">{{ $product->name_ar }}</h4>
                             <span class="badge bg-light text-dark border">ID: {{ $product->id }}</span>
                         </div>
-                        <span class="badge fs-6 rounded-pill {{ $product->quantity > 0 ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis' }}">
-                            <i class="fas {{ $product->quantity > 0 ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
-                            {{ $product->quantity > 0 ? 'In Stock' : 'Out of Stock' }}
-                        </span>
+<span class="badge fs-6 rounded-pill {{ $product->code ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis' }}">
+    <i class="fas {{ $product->code ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
+    {{ $product->code ?? 'No Code' }}
+</span>
+
                     </div>
 
                     {{-- 2. السعر --}}
@@ -57,17 +58,16 @@
                         @endif
                     </div>
 
-                    {{-- 3. الوصف --}}
                     <div class="mb-4">
                         <p class="text-muted">{{ $product->small_description }}</p>
                         <p class="text-muted" dir="rtl">{{ $product->small_description_ar }}</p>
                     </div>
 
-                    {{-- 4. جدول التفاصيل الأساسية --}}
                     <h5 class="mb-3 fw-bold">Key Details</h5>
                     <div class="table-responsive mb-4">
                         <table class="table table-bordered table-striped" style="font-size: 0.9rem;">
                             <tbody>
+                                <tr>
                                 <tr>
                                     <th class="w-25 bg-light"><i class="fas fa-copyright text-muted me-2"></i>Brand</th>
                                     <td>{{ optional($product->brand)->name ?? 'N/A' }}</td>

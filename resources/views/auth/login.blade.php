@@ -46,10 +46,17 @@
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
-
-                    @if (Route::has('password.request'))
-                        <a class="forgot-password" href="{{ route('password.request') }}">{{ __('Forgot Password?') }}</a>
-                    @endif
+<p class="lost_password">
+                                <span class="inline">
+                                    <input type="checkbox" id="cb1" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                                        <label for="cb1" class="label-text">{{ ('Remember Me') }}</label>
+                                </span>
+                                 @if (Route::has('password.request'))
+                                    <a class="forgot-pw" href="{{ route('password.request') }}">
+                                        {{ ('Forgot Your Password?') }}
+                                    </a>
+                                @endif
+                            </p>
                 </div>
 
                 <div class="d-grid">

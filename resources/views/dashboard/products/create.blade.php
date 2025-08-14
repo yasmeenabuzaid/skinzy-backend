@@ -158,14 +158,19 @@
                                 <label for="price_after_discount" class="form-label">Price After Discount (Optional)</label>
                                 <input type="number" step="0.01" name="price_after_discount" class="form-control" value="{{ old('price_after_discount') }}">
                             </div>
-                             <div class="col-md-6">
+                             {{-- <div class="col-md-6">
                                 <label for="quantity" class="form-label">Quantity</label>
                                 <input type="number" name="quantity" class="form-control" min="0" value="{{ old('quantity') }}">
-                            </div>
+                            </div> --}}
                             <div class="col-md-12">
                                 <label for="description" class="form-label">Full Description (English)</label>
                                 <textarea name="description" class="form-control" rows="5">{{ old('description') }}</textarea>
                             </div>
+<div class="col-md-12">
+    <label for="code" class="form-label">Product Code</label>
+    <input type="text" name="code" class="form-control" value="{{ old('code') }}">
+</div>
+
                             <div class="col-md-12">
                                 <label for="description_ar" class="form-label">Full Description (Arabic)</label>
                                 <textarea name="description_ar" class="form-control" rows="5">{{ old('description_ar') }}</textarea>

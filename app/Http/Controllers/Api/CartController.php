@@ -30,7 +30,27 @@ public function getCart(Request $request)
     ]);
 }
 
+ public function getCartCount(Request $request)
+    {
+        $userId = auth()->id();
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not authenticated'
+            ], 401);
+        }
 
+        // نستخدم sum('quantity') لجمع الكميات كلها، وليس فقط عدد الصفوف
+        // هذا يعطي العدد الفعلي للمنتجات في السلة
+        $count = Cart::where('user_id', $userId)
+                     ->where('status', 'pending')
+                     ->sum('quantity');
+
+        return response()->json([
+            'success' => true,
+            'count' => (int)$count, // نرسل العدد كرقم صحيح
+        ]);
+    }
 
 
 

@@ -87,6 +87,10 @@
                             <label for="exampleInputName1" class="form-label">Small Description  In Arabic</label>
                             <input type="text" class="form-control" id="small_description_ar" placeholder="Small Description" name="small_description_ar" value="{{ old('small_description_ar', $product->small_description_ar) }}" required>
                         </div>
+                        <div class="col-12">
+                            <label for="code" class="form-label">product code</label>
+                            <input type="text" class="form-control" id="code" placeholder="product code" name="code" value="{{ old('code', $product->code) }}" required>
+                        </div>
 
                         <div class="col-12">
                             <label for="exampleInputEmail3" class="form-label">Description  In Arabic</label>
@@ -104,10 +108,10 @@
                             <input type="text" name="price_after_discount" class="form-control" value="{{ old('price_after_discount', $product->price_after_discount) }}">
                         </div>
 
-                        <div class="col-12">
+                        {{-- <div class="col-12">
                             <label for="exampleInputName1" class="form-label">Quantity</label>
                             <input type="number" class="form-control" id="quantity" placeholder="quantity" name="quantity" value="{{ old('quantity', $product->quantity) }}" min="1" step="1">
-                        </div>
+                        </div> --}}
 
                         <div class="col-12">
                             <label for="sub_category_id" class="form-label">Category - Sub Category</label>

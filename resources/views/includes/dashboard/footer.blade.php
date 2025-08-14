@@ -24,7 +24,9 @@
   <script src="{{asset("assets/vendor/simple-datatables/simple-datatables.js")}}"></script>
   <script src="{{asset("assets/vendor/tinymce/tinymce.min.js")}}"></script>
   <script src="{{asset("assets/vendor/php-email-form/validate.js")}}"></script>
-
+   <script src="{{asset("https://code.jquery.com/jquery-3.5.1.slim.min.js")}}"></script>
+    <script src="{{asset("https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js")}}"></script>
+    <script src="{{asset("https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js")}}"></script>
   <!-- Template Main JS File -->
   <script src="{{asset("assets/js/main.js")}}"></script>
 

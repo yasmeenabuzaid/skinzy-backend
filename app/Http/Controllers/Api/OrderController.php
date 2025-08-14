@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use App\Mail\AdminOrderNotification;
+use App\Mail\UserOrderConfirmation;
+use App\Mail\UserPendingPaymentNotice;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -57,12 +59,11 @@ public function addAddress(Request $request)
         ], 401);
     }
 
-    // التحقق من البيانات المدخلة (validation)
+    // validation بدون custom_city
     $validatedData = $request->validate([
         'title' => 'nullable|string|max:255',
         'full_address' => 'required|string|max:1000',
-        'city_id' => 'nullable|exists:cities,id',
-        'custom_city' => 'nullable|string|max:255',
+        'city_id' => 'required|exists:cities,id', // اجعلها required
         'state' => 'nullable|string|max:255',
         'postal_code' => 'nullable|string|max:20',
         'country' => 'nullable|string|max:255',
@@ -70,34 +71,12 @@ public function addAddress(Request $request)
         'longitude' => 'nullable|numeric',
     ]);
 
-    // التحقق من وجود إما city_id أو custom_city
-    if (empty($validatedData['city_id']) && empty($validatedData['custom_city'])) {
-        return response()->json([
-            'success' => false,
-            'message' => 'يجب اختيار مدينة أو إدخال اسم مدينة أخرى'
-        ], 422);
-    }
-
-    // تعيين city_id إلى 14 إذا لم يُحدد ولم تُدخل مدينة مخصصة
-    $cityId = $validatedData['city_id'] ?? null;
-    if (empty($cityId)) {
-        $cityId = 14;
-    }
-
     $address = new Address();
     $address->user_id = $userId;
     $address->title = $validatedData['title'] ?? null;
     $address->full_address = $validatedData['full_address'];
-
-    // تعيين city_id دائماً
-    $address->city_id = $cityId;
-
-    // تعيين custom_city فقط لو city_id = 14
-    if ($cityId == 14) {
-        $address->custom_city = $validatedData['custom_city'] ?? null;
-    } else {
-        $address->custom_city = null;
-    }
+    $address->city_id = $validatedData['city_id'];
+    // شيل $address->custom_city
 
     $address->state = $validatedData['state'] ?? null;
     $address->postal_code = $validatedData['postal_code'] ?? null;
@@ -113,7 +92,6 @@ public function addAddress(Request $request)
         'address' => $address
     ]);
 }
-
 
 
 
@@ -205,30 +183,38 @@ public function createOrder(Request $request)
 
         $totalPrice = 0.0;
 
-        foreach ($cartItems as $item) {
-            $product = Product::find($item->product_id);
-            if (!$product) {
-                \Log::warning("Product not found for cart item", ['cart_item_id' => $item->id]);
-                continue;
-            }
+       foreach ($cartItems as $item) {
+    $product = Product::find($item->product_id);
+    if (!$product) {
+        \Log::warning("Product not found for cart item", ['cart_item_id' => $item->id]);
+        continue;
+    }
 
-            $unitPrice = $product->price_after_discount ?? $product->price ?? 0;
-            $itemTotal = $item->quantity * $unitPrice;
-            $totalPrice += $itemTotal;
+    $unitPrice = $product->price_after_discount ?? $product->price ?? 0;
+    $itemTotal = $item->quantity * $unitPrice;
+    $totalPrice += $itemTotal;
 
-            OrderDetail::create([
-                'order_id'    => $order->id,
-                'product_id'  => $product->id,
-                'quantity'    => $item->quantity,
-                'price'       => $unitPrice,
-                'discount'    => 0,
-                'total_price' => $itemTotal,
-            ]);
+    OrderDetail::create([
+        'order_id'    => $order->id,
+        'product_id'  => $product->id,
+        'quantity'    => $item->quantity,
+        'price'       => $unitPrice,
+        'discount'    => 0,
+        'total_price' => $itemTotal,
+    ]);
 
-            $item->status     = 'ordered';
-            $item->ordered_at = now();
-            $item->save();
-        }
+    $item->status     = 'ordered';
+    $item->ordered_at = now();
+    $item->save();
+
+    $product->increment('sold_count', $item->quantity);
+    \Log::info("Sold count updated", [
+        'product_id' => $product->id,
+        'added'      => $item->quantity,
+        'new_count'  => $product->sold_count
+    ]);
+}
+
 
         $FREE_SHIPPING_THRESHOLD = 15;
 
@@ -250,9 +236,36 @@ public function createOrder(Request $request)
             $deliveryFee = 0.0;
         }
 
-        $order->total_price = $totalPrice + $deliveryFee;
-        $order->final_price = $order->total_price;
+    $order->total_price = $totalPrice;
+$order->final_price = $totalPrice + $deliveryFee;
+
         $order->save();
+
+
+       // تحديد حالة الطلب حسب وسيلة الدفع
+if ($validatedData['payment_method'] === 'cash_on_delivery') {
+    $order->order_status = 'processing';
+    $order->save();
+
+    // إرسال تأكيد للعميل عند بدء تجهيز الطلب
+    if (!empty($order->email)) {
+        Mail::to($order->email)->send(new UserOrderConfirmation($order));
+        \Log::info("User notified with processing confirmation email at: " . $order->email);
+    }
+
+} else {
+    // إرسال تنبيه بأن الطلب قيد الانتظار لحين الدفع
+    if (!empty($order->email)) {
+        Mail::to($order->email)->send(new UserPendingPaymentNotice($order));
+        \Log::info("User notified with pending payment notice email at: " . $order->email);
+    }
+}
+
+// إرسال تنبيه للإدمن دائماً
+$adminEmail = 'yasmeen.abuzaid@a-tech.dev'; // أو اجلبه من config
+Mail::to($adminEmail)->send(new AdminOrderNotification($order));
+\Log::info("Admin notified via email at: " . $adminEmail);
+
 
         \Log::info("Prices calculated", [
             'subtotal'              => $totalPrice,
@@ -289,9 +302,9 @@ public function createOrder(Request $request)
             \Log::info("Payment proof saved");
         }
 
-        $adminEmail = config('mail.admin_email', 'admin@example.com');
-        Mail::to($adminEmail)->send(new AdminOrderNotification($order));
-        \Log::info("Admin notified via email at: " . $adminEmail);
+        // $adminEmail = config('mail.username', 'yasmeen.abuzaid@a-tech.dev');
+        // Mail::to('yaseenrasha4@gmail.com')->send(new AdminOrderNotification($order));
+        // \Log::info("Admin notified via email at: " . $adminEmail);
 
         return response()->json([
             'success'                => true,

@@ -166,6 +166,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Product</th>
+                                <th>Product Code</th>
                                 <th>Image</th>
                                 <th>Category</th>
                                 <th>Qty</th>
@@ -178,6 +179,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $detail->product->name }}</td>
+                                    <td>{{ $detail->product->code }}</td>
                                     <td>
                                         @if ($detail->product->images->isNotEmpty())
                                             <img src="{{ asset($detail->product->images[0]->image) }}" alt="{{ $detail->product->name }}" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
@@ -218,9 +220,7 @@
                                 <div class="col-md-5">
                                      @if($paymentProof->image)
                                         <p><strong>Proof Image:</strong></p>
-                                        <a href="{{ $paymentProof->image }}" target="_blank">
                                             <img src="{{ $paymentProof->image }}" alt="Proof" class="img-fluid img-thumbnail" style="max-height: 250px;">
-                                        </a>
                                     @endif
                                 </div>
                             </div>

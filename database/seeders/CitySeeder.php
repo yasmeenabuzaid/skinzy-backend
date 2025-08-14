@@ -10,7 +10,7 @@ class CitySeeder extends Seeder
     public function run(): void
     {
         $cities = [
-            ['name' => 'Amman', 'delivery_fee' => 2.00, 'free_shipping_min' => 30.00],
+            ['name' => 'Amman', 'delivery_fee' => 1.00, 'free_shipping_min' => 30.00],
             ['name' => 'Zarqa', 'delivery_fee' => 2.50, 'free_shipping_min' => 35.00],
             ['name' => 'Irbid', 'delivery_fee' => 3.00, 'free_shipping_min' => 40.00],
             ['name' => 'Aqaba', 'delivery_fee' => 5.00, 'free_shipping_min' => 50.00],

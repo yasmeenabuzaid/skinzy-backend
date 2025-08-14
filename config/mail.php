@@ -34,17 +34,16 @@ return [
     */
 
     'mailers' => [
-       'smtp' => [
-    'transport' => 'smtp',
-    'host' => 'smtp.hostinger.com',
-    'port' => 465,
-    'encryption' => 'ssl',
-    'username' => 'info@atech-dev.network',
-    'password' => 'S9tFxaHnHRjC@',
-    'timeout' => null,
-    'auth_mode' => null,
-],
-
+        'smtp' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+            'port' => env('MAIL_PORT', 587),
+            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+            'username' => env('MAIL_USERNAME'),
+            'password' => env('MAIL_PASSWORD'),
+            'timeout' => null,
+            'local_domain' => env('MAIL_EHLO_DOMAIN'),
+        ],
 
         'ses' => [
             'transport' => 'ses',

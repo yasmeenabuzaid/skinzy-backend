@@ -132,7 +132,7 @@
                                                                     <i class="bi bi-eye"></i> Show
                                                                 </a>
 
-                                                                <form action="{{ route('order.destroy', $order->id) }}"
+                                                                {{-- <form action="{{ route('order.destroy', $order->id) }}"
                                                                     method="POST" style="display:inline;" title="Delete">
                                                                     @csrf
                                                                     @method('DELETE')
@@ -142,7 +142,7 @@
                                                                         onclick="confirmDeletion(event, '{{ route('order.destroy', $order->id) }}')">
                                                                         <i class="bi bi-trash"></i> Delete
                                                                     </button>
-                                                                </form>
+                                                                </form> --}}
                                                             </td>
                                                         </tr>
                                                     @endforeach

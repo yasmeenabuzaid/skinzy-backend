@@ -22,12 +22,10 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm" style="padding: 20px">
             <div class="container">
-                <a href="/"
-                    style="            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            text-decoration: none;">Skinzy<span
-                        style="color:#FF671F">Care</span></a>
+             <a href="/" style="text-decoration: none;">
+    <img src="/logo.jpg" alt="SkinzyCare" style="height: 40px;">
+</a>
+
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -83,7 +81,7 @@
             </div>
         </nav>
 
-        <main >
+        <main>
             @yield('content')
         </main>
     </div>

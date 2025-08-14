@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Skinzy Care'),
     'user_view_url' => env('USER_VIEW_URL', 'https://default-url.com'),
 
     /*
