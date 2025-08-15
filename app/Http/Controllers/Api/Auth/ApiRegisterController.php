@@ -17,7 +17,7 @@ class ApiRegisterController extends Controller
         $validator = Validator::make($request->all(), [
             'Fname' => ['required', 'string', 'max:255'],
             'Lname' => ['required', 'string', 'max:255'],
-            'mobile' => ['required', 'string', 'max:20'],
+            // 'mobile' => ['required', 'string', 'max:20'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'], // استخدمي password_confirmation في الفورم
         ]);
@@ -33,7 +33,7 @@ class ApiRegisterController extends Controller
         $user = User::create([
             'Fname' => $request->Fname,
             'Lname' => $request->Lname,
-            'mobile' => $request->mobile,
+            // 'mobile' => $request->mobile,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);

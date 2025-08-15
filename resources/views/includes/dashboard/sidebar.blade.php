@@ -51,13 +51,12 @@
                 <span>Products</span>
             </a>
         </li>
-    <li class="nav-item">
-    {{-- This link is ONLY active when you are on the bulk entry page --}}
+    {{-- <li class="nav-item">
     <a class="nav-link {{ request()->routeIs('bulk.entry.index') ? 'active' : '' }}" href="{{ route('bulk.entry.index') }}">
         <i class="bi bi-stack"></i>
         <span>Bulk Entry</span>
     </a>
-</li>
+</li> --}}
 
         <!-- New tab: Deleted Items -->
         <li class="nav-item">

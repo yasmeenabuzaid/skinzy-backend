@@ -55,7 +55,7 @@ public function getCart(Request $request)
 
 
 
-  public function addToCart(Request $request)
+ public function addToCart(Request $request)
 {
     $request->validate([
         'productId' => 'required|integer|exists:products,id',
@@ -63,13 +63,13 @@ public function getCart(Request $request)
     ]);
 
     $userId = auth()->id();
-    $user = auth()->user();
+    // $user = auth()->user(); // لم نعد بحاجة لهذا السطر حاليًا
 
     $order = Order::firstOrCreate(
         ['user_id' => $userId, 'order_status' => 'cart'],
         [
             'total_price' => 0,
-            'mobile' => $user->mobile ?? null,
+            'mobile' => '0000000000', // ✨ تم وضع رقم مؤقت هنا
         ]
     );
 
@@ -102,7 +102,6 @@ public function getCart(Request $request)
         'cartItem' => $cartItem,
     ]);
 }
-
 
 
 
