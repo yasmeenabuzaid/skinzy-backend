@@ -6,7 +6,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:3000'],  // رابط React الصحيح
+    'allowed_origins' => [
+        'http://localhost:3000', // أثناء التطوير
+        'https://skinzy-ecommerce-z4p6.vercel.app', // الموقع الفعلي
+    ],
 
     'allowed_origins_patterns' => [],
 
@@ -16,6 +19,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => true,  // لازم تكون true إذا بتستخدم الكوكيز مع Sanctum
+    'supports_credentials' => true, // لازم true إذا تستخدم الكوكيز مع Sanctum
 
 ];
