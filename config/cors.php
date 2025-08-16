@@ -8,7 +8,7 @@ return [
 
     'allowed_origins' => [
         'http://localhost:3000', // أثناء التطوير
-        'https://skinzy-ecommerce-z4p6.vercel.app', // الموقع الفعلي
+        'https://www.skinzycare.com', // الموقع الفعلي
     ],
 
     'allowed_origins_patterns' => [],

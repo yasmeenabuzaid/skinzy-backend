@@ -216,7 +216,7 @@ public function createOrder(Request $request)
 }
 
 
-        $FREE_SHIPPING_THRESHOLD = 15;
+        $FREE_SHIPPING_THRESHOLD = 20;
 
         $deliveryFee = 0.0;
         $freeShippingApplied = false;
@@ -225,7 +225,7 @@ public function createOrder(Request $request)
         if ($address && $validatedData['shipping_method'] === 'home_delivery') {
             $deliveryFee = (float) ($address->city->delivery_fee ?? 0);
 
-            if ($totalPrice >= $FREE_SHIPPING_THRESHOLD) {
+            if ($totalPrice > $FREE_SHIPPING_THRESHOLD) {
                 $freeShippingApplied = true;
                 $deliveryFee = 0.0;
                 \Log::info("Free shipping applied since subtotal >= {$FREE_SHIPPING_THRESHOLD}");

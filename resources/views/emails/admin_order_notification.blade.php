@@ -37,7 +37,7 @@
                         <td width="50%" valign="top">
                             <p style="font-size: 14px; color: #78350f; margin: 0 0 4px 0;">المبلغ الإجمالي</p>
                             <p style="font-size: 20px; color: #78350f; font-weight: 700; margin: 0;">
-                                {{ $order->total_price }} {{ config('app.currency', 'د.أ') }}
+                                {{ $order->final_price }} {{ config('app.currency', 'د.أ') }}
                             </p>
                         </td>
                     </tr>
