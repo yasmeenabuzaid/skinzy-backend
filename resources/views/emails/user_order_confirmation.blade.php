@@ -122,7 +122,7 @@
 
         <tr>
             <td align="center" style="padding: 20px 30px; background-color: #f9fafb; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-                <p style="font-size: 14px; color: #6b7280; margin: 0;">إذا كان لديك أي استفسار، لا تتردد في <a href="mailto:support@skinzy.care" style="color: #db2777; text-decoration: none;">التواصل معنا</a>.</p>
+                <p style="font-size: 14px; color: #6b7280; margin: 0;">إذا كان لديك أي استفسار، لا تتردد في <a href="mailto:info@skinzycare.come" style="color: #db2777; text-decoration: none;">التواصل معنا</a>.</p>
                 <p style="font-size: 14px; color: #6b7280; margin: 8px 0 0 0;">نتمنى لك يوماً سعيداً 💖</p>
             </td>
         </tr>

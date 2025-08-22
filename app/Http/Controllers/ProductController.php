@@ -10,6 +10,8 @@ use App\Models\ProductImage;
 use App\Models\Feedback;
 use App\Models\Specification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ProductController extends Controller
@@ -52,45 +54,96 @@ public function index(Request $request)
     /**
      * Store multiple newly created products in storage.
      */
-    public function bulkStore(Request $request)
+     public function bulkStore(Request $request)
     {
-        // 1. Validate the incoming array of products
+        // 1. التحقق من صحة البيانات بنفس قواعد دالة store ولكن لكل عنصر في المصفوفة
         $validated = $request->validate([
             'products' => 'required|array',
             'products.*.name' => 'required|string',
             'products.*.name_ar' => 'required|string',
+            'products.*.code' => 'nullable|string',
+            'products.*.small_description' => 'required|string',
+            'products.*.small_description_ar' => 'required|string',
+            'products.*.description' => 'required',
+            'products.*.description_ar' => 'required',
             'products.*.price' => 'required|numeric',
+            'products.*.price_after_discount' => 'nullable|numeric',
             'products.*.sub_category_id' => 'required|exists:sub_categories,id',
-            // Add other necessary validations for each field
+            'products.*.brand_id' => 'required|exists:brands,id',
+            'products.*.type' => 'required|in:main,variation',
+            'products.*.parent_product_id' => 'nullable|exists:products,id',
+            'products.*.specifications' => 'nullable|array',
+            'products.*.specifications.*.key' => 'nullable|string',
+            'products.*.specifications.*.key_ar' => 'nullable|string',
+            'products.*.specifications.*.value' => 'nullable|string',
+            'products.*.specifications.*.value_ar' => 'nullable|string',
+            // ملاحظة: التحقق من الصور في الإدخال الجماعي يتطلب معالجة خاصة في الواجهة الأمامية
+            // غالبًا ما يتم إرسال أسماء الملفات أو روابطها بدلاً من رفعها مباشرة هنا
         ]);
 
-        // 2. Use a Database Transaction for safety
+        // 2. استخدام Transaction لضمان سلامة البيانات
         try {
-            DB::transaction(function () use ($validated) {
-                foreach ($validated['products'] as $productData) {
-                    // Create the main product
+            DB::transaction(function () use ($validated, $request) {
+                // استبدلنا $validated['products'] بـ $request->products للحصول على كل البيانات
+                foreach ($request->products as $index => $productData) {
+                    // 3. إنشاء المنتج الرئيسي (نفس منطق store)
                     $product = Product::create([
                         'name' => $productData['name'],
-                        'name_ar' => $productData['name_ar'],
-                        'price' => $productData['price'],
-                        'sub_category_id' => $productData['sub_category_id'],
-                        'small_description' => $productData['small_description'] ?? '',
-                        'small_description_ar' => $productData['small_description_ar'] ?? '',
-                        'description' => $productData['description'] ?? '',
-                        'description_ar' => $productData['description_ar'] ?? '',
-                        'price_after_discount' => $productData['price_after_discount'] ?? null,
-                        'brand_id' => $productData['brand_id'] ?? null,
                         'code' => $productData['code'] ?? null,
-                        'type' => 'main', // Assuming all are main products
+                        'name_ar' => $productData['name_ar'],
+                        'small_description' => $productData['small_description'],
+                        'small_description_ar' => $productData['small_description_ar'],
+                        'description' => $productData['description'],
+                        'description_ar' => $productData['description_ar'],
+                        'price' => $productData['price'],
+                        'price_after_discount' => $productData['price_after_discount'] ?? null,
+                        'sub_category_id' => $productData['sub_category_id'],
+                        'brand_id' => $productData['brand_id'],
+                        'type' => $productData['type'],
+                        'parent_product_id' => ($productData['type'] === 'variation') ? $productData['parent_product_id'] : null,
                     ]);
 
-                    // Note: Handling file uploads in bulk forms is complex.
-                    // This logic assumes you will handle it or that it's not needed for the bulk form.
+                    // 4. معالجة المواصفات (Specifications) للمنتج الحالي
+                    if (!empty($productData['specifications'])) {
+                        foreach ($productData['specifications'] as $spec) {
+                            if (!empty($spec['key']) && !empty($spec['value'])) {
+                                $product->specifications()->create([
+                                    'key' => $spec['key'],
+                                    'key_ar' => $spec['key_ar'] ?? null,
+                                    'value' => $spec['value'],
+                                    'value_ar' => $spec['value_ar'] ?? null,
+                                ]);
+                            }
+                        }
+                    }
+
+                    // 5. معالجة الصور (إذا تم إرسالها)
+                    // هذا الجزء يعتمد على كيفية إرسال الصور من الواجهة الأمامية
+                    // نفترض هنا أنك ترسل الصور بنفس طريقة store ولكن داخل مصفوفة products
+                    if ($request->hasFile("products.{$index}.image")) {
+                        $images = [];
+                        foreach ($request->file("products.{$index}.image") as $file) {
+                            $uploadResult = Cloudinary::upload($file->getRealPath());
+                            if (!$uploadResult) {
+                                // يمكنك إيقاف العملية هنا إذا فشل رفع الصورة
+                                throw new \Exception('Failed to upload image.');
+                            }
+                            $imageUrl = $uploadResult->getSecurePath();
+                            $images[] = [
+                                'image' => $imageUrl,
+                                'product_id' => $product->id,
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ];
+                        }
+                        ProductImage::insert($images);
+                    }
                 }
             });
         } catch (\Exception $e) {
-            \Log::error('Bulk Store Failed: ' . $e->getMessage());
-            return back()->with('error', 'An error occurred while saving the products.');
+            Log::error('Bulk Store Failed: ' . $e->getMessage());
+            // إرجاع رسالة خطأ مفصلة أكثر في حالة التطوير
+            return back()->with('error', 'An error occurred while saving the products. Error: ' . $e->getMessage());
         }
 
         return to_route('products.index')->with('success', 'Products created successfully!');

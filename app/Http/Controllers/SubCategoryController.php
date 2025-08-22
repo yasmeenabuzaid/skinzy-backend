@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SubCategory;
 use App\Models\Product;
-use App\Models\category;
+use App\Models\Category;
 use Illuminate\Http\Request;
   use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 

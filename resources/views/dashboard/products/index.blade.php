@@ -20,9 +20,7 @@
             </button>
         </a>
     </div>
-<a href="{{ route('products.create') }}" class="btn btn-primary mb-3">Add New Product</a>
 
-<a href="{{ route('products.bulk.create') }}" class="btn btn-success mb-3 ml-2">Add Bulk Products</a>
     {{-- Alerts --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">

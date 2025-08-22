@@ -27,7 +27,7 @@ Route::prefix('e-commerce/customer')->group(function () {
     Route::get('/brands', [BrandController::class, 'index']);
     Route::post('/favorites', [FavoriteController::class, 'store']);
     Route::get('/favorites', [FavoriteController::class, 'index']);
-    
+
     Route::delete('/favorites', [FavoriteController::class, 'destroy']);
     Route::get('/cities', [OrderController::class, 'getCities']);
 });
