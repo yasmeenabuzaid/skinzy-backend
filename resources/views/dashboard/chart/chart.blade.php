@@ -95,60 +95,62 @@
                 <!-- Line Chart -->
                 <div id="reportsChart"></div>
 
-                <script>
-                  document.addEventListener("DOMContentLoaded", () => {
-                    // Dates, orders, and revenue passed from the controller
-                    const dates = @json($dates); // Dynamic dates (X-axis)
-                    const orders = @json($orders); // Dynamic orders data
-                    const revenue = @json($revenue); // Dynamic revenue data
+     <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Fetch the new data from the controller
+        const dates = @json($dates);
+        const completedOrders = @json($completedOrders); // New variable
+        const processingOrders = @json($processingOrders); // New variable
 
-                    // Initialize the chart with the dynamic data
-                    new ApexCharts(document.querySelector("#reportsChart"), {
-                      series: [{
-                        name: 'Orders',
-                        data: orders, // Dynamic orders data
-                      }, {
-                        name: 'Revenue',
-                        data: revenue, // Dynamic revenue data
-                      }],
-                      chart: {
-                        height: 350,
-                        type: 'area',
-                        toolbar: {
-                          show: false
-                        },
-                      },
-                      markers: {
-                        size: 4
-                      },
-                      colors: ['#4154f1', '#2eca6a'], // Blue for orders, Green for revenue
-                      fill: {
-                        type: "gradient",
-                        gradient: {
-                          shadeIntensity: 1,
-                          opacityFrom: 0.3,
-                          opacityTo: 0.4,
-                          stops: [0, 90, 100]
-                        }
-                      },
-                      dataLabels: {
-                        enabled: false
-                      },
-                      stroke: {
-                        curve: 'smooth',
-                        width: 2
-                      },
-                      xaxis: {
-                        categories: dates, // Use dates for X-axis
-                      },
-                      tooltip: {
-                        x: {
-                          format: 'yyyy-MM-dd' // Format as dates
-                        },
-                      }
-                    }).render();
-                  });
-                </script>
+        new ApexCharts(document.querySelector("#reportsChart"), {
+            // Define two data series (datasets) instead of one
+            series: [{
+                name: 'Completed Orders', // First line name
+                data: completedOrders,
+            }, {
+                name: 'Processing Orders', // Second line name
+                data: processingOrders,
+            }],
+            chart: {
+                height: 350,
+                type: 'area',
+                toolbar: {
+                    show: false
+                },
+            },
+            markers: {
+                size: 4
+            },
+            colors: ['#2eca6a', '#ff771d'], // Color for first line (green) and second line (orange)
+            fill: {
+                type: "gradient",
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.3,
+                    opacityTo: 0.4,
+                    stops: [0, 90, 100]
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2
+            },
+            xaxis: {
+                type: 'datetime',
+                categories: dates // X-axis will use the dates
+            },
+            tooltip: {
+                x: {
+                    format: 'dd/MM/yy'
+                },
+            }
+        }).render();
+    });
+</script>
+
                 <!-- End Line Chart -->
               </div>
             </div>

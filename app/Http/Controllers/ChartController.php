@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\SubCategory;
+
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
-use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -13,72 +13,74 @@ class ChartController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $ALlOrderCount = Order::count();
-        $productCount = Product::count();
-$userCount = User::where('id', '!=', auth()->id())->count();
+   public function index()
+{
+    $ALlOrderCount = Order::count();
+    $productCount = Product::count();
+    $userCount = User::where('id', '!=', auth()->id())->count();
 
-        $pendingPaymentCount = Order::where('order_status', 'pending_payment')->count();
-        $processingCount = Order::where('order_status', 'processing')->count();
-        $readyForPickupCount = Order::where('order_status', 'ready_for_pickup')->count();
-        $shippedCount = Order::where('order_status', 'shipped')->count();
-        $completedCount = Order::where('order_status', 'completed')->count();
-        $cancelledCount = Order::where('order_status', 'cancelled')->count();
+    $pendingPaymentCount = Order::where('order_status', 'pending_payment')->count();
+    $processingCount = Order::where('order_status', 'processing')->count();
+    $readyForPickupCount = Order::where('order_status', 'ready_for_pickup')->count();
+    $shippedCount = Order::where('order_status', 'shipped')->count();
+    $completedCount = Order::where('order_status', 'completed')->count();
+    $cancelledCount = Order::where('order_status', 'cancelled')->count();
 
+    // 1. تحديد نطاق التواريخ بشكل صحيح (آخر 7 أيام)
+    $endDate = Carbon::today()->endOfDay();
+    $startDate = Carbon::today()->subDays(6)->startOfDay();
 
-        // Define the end date as today
-        $endDate = Carbon::today();
-        // Define the start date as 7 days ago (including today)
-        $startDate = $endDate->copy()->subDays(6);
+    // 2. تعديل الاستعلام ليحسب عدد كل نوع من الطلبات
+    $ordersData = Order::whereBetween('created_at', [$startDate, $endDate])
+        ->selectRaw("
+            DATE(created_at) as date,
+            COUNT(CASE WHEN order_status = 'completed' THEN 1 END) as completed_count,
+            COUNT(CASE WHEN order_status = 'processing' THEN 1 END) as processing_count
+        ")
+        ->groupBy('date')
+        ->orderBy('date', 'asc')
+        ->get();
 
-        // Query orders for the past week (7 days)
-        $ordersData = Order::whereBetween('created_at', [$startDate, $endDate])
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as orders_count, SUM(total_price) as revenue')
-            ->groupBy('date')
-            ->orderBy('date', 'asc') // Sort by date (ascending)
-            ->get();
+    // 3. تجهيز مصفوفات منفصلة لكل نوع من البيانات
+    $dates = [];
+    $completedOrders = [];
+    $processingOrders = [];
 
-        // Generate a list of dates for the past 7 days (inclusive)
-        $dates = [];
-        $orders = [];
-        $revenue = [];
-
-        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
-            $dates[] = $date->toDateString(); // e.g., "2024-12-23"
-            // Default to 0 orders and 0 revenue for each date
-            $orders[$date->toDateString()] = 0;
-            $revenue[$date->toDateString()] = 0;
-        }
-
-        // Populate orders and revenue for the retrieved data
-        foreach ($ordersData as $data) {
-            $orders[$data->date] = $data->orders_count;
-            $revenue[$data->date] = $data->revenue;
-        }
-
-        // Flatten the orders and revenue arrays to match the dates array
-        $orders = array_values($orders);
-        $revenue = array_values($revenue);
-
-
-        return view('dashboard.chart.chart', compact(
-            'productCount',
-            'userCount',
-            'ALlOrderCount',
-            'pendingPaymentCount',
-            'processingCount',
-            'readyForPickupCount',
-            'shippedCount',
-            'completedCount',
-            'cancelledCount',
-            'dates',
-            'orders',
-            'revenue'
-        ));
-
+    for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+        $dateString = $date->toDateString();
+        $dates[] = $dateString;
+        // وضع قيمة ابتدائية (صفر) لكل يوم
+        $completedOrders[$dateString] = 0;
+        $processingOrders[$dateString] = 0;
     }
 
+    // 4. تعبئة المصفوفات بالبيانات الحقيقية من الاستعلام
+    foreach ($ordersData as $data) {
+        $completedOrders[$data->date] = $data->completed_count;
+        $processingOrders[$data->date] = $data->processing_count;
+    }
+
+    // 5. تحويل المصفوفات لتكون جاهزة للشارت
+    $completedOrders = array_values($completedOrders);
+    $processingOrders = array_values($processingOrders);
+
+
+    // 6. إرسال المتغيرات الجديدة إلى الـ view
+    return view('dashboard.chart.chart', compact(
+        'productCount',
+        'userCount',
+        'ALlOrderCount',
+        'pendingPaymentCount',
+        'processingCount',
+        'readyForPickupCount',
+        'shippedCount',
+        'completedCount',
+        'cancelledCount',
+        'dates',
+        'completedOrders',  // متغير جديد
+        'processingOrders'  // متغير جديد
+    ));
+}
     /**
      * Show the form for creating a new resource.
      */

@@ -11,6 +11,12 @@ use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\Auth\ApiRegisterController;
 use App\Http\Controllers\Api\Auth\ApiLoginController;
 
+Route::post('/products/import', [ProductController::class, 'import']);
+
+Route::post('/subcategories/import', [SubCategoryController::class, 'import']);
+    Route::post('/categories/import', [CategoryController::class, 'import']);
+Route::post('/brands/import', [BrandController::class, 'import']);
+// ------------------------------------------------------
 Route::prefix('e-commerce/customer')->group(function () {
     Route::post('/auth/register', [ApiRegisterController::class, 'register']);
     Route::post('/auth/login', [ApiLoginController::class, 'login']);
