@@ -23,55 +23,6 @@ class CategoryController extends Controller
         return response()->json($categories);
     }
 
-    public function productsByCategory($categoryId)
-    {
-        $products = Cache::remember("category_products_{$categoryId}", 3600, function () use ($categoryId) {
-            $category = Category::with([
-                'subCategories.products' => function ($query) {
-                    $query->where('type', 'main');
-                },
-                'subCategories.products.images'
-            ])
-            ->where('id', $categoryId)
-            ->where('isDelete', false)
-            ->first();
-
-            if (!$category) {
-                return null;
-            }
-
-            return $category->subCategories->flatMap(function ($subCategory) {
-                return $subCategory->products;
-            });
-        });
-
-        if (is_null($products)) {
-            return response()->json(['message' => 'Category not found'], 404);
-        }
-
-        return response()->json($products);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     // ------------------------------------------------------------------------

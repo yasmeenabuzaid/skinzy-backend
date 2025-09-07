@@ -9,19 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up(): void
-{
-    Schema::create('brands', function (Blueprint $table) {
-        $table->id();
-        $table->string('name');
-        $table->string('image')->nullable(); // الصورة اختيارية
-        $table->timestamps();
-    });
-}
+    public function up(): void
+    {
+        Schema::create('brands', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('image')->nullable(); // الصورة اختيارية
+            $table->timestamps();
+        });
+    }
 
-public function down(): void
-{
-    Schema::dropIfExists('brands');
-}
+    public function down(): void
+    {
+        Schema::dropIfExists('brands');
+    }
 
 };

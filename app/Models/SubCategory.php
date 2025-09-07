@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class SubCategory extends Model
 {
@@ -26,14 +27,14 @@ class SubCategory extends Model
     protected static function booted()
     {
         static::deleting(function ($subCategory) {
-            \Log::info('Deleting SubCategory ID: ' . $subCategory->id);
-            \Log::info('Related Products Count: ' . $subCategory->products()->count());
+            Log::info('Deleting SubCategory ID: ' . $subCategory->id);
+            Log::info('Related Products Count: ' . $subCategory->products()->count());
 
             if ($subCategory->isForceDeleting()) {
-                \Log::info('Force deleting related products...');
+                Log::info('Force deleting related products...');
                 $subCategory->products()->forceDelete();
             } else {
-                \Log::info('Soft deleting related products...');
+                Log::info('Soft deleting related products...');
                 $subCategory->products()->delete();
             }
         });

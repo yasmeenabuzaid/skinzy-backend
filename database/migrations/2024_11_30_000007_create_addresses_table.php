@@ -11,27 +11,25 @@ return new class extends Migration
      */
     public function up(): void
     {
-   Schema::create('addresses', function (Blueprint $table) {
-    $table->id();
+        Schema::create('addresses', function (Blueprint $table) {
+            $table->id();
 
-    $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
 
-    $table->string('title')->nullable(); // مثل "المنزل"
-    $table->string('full_address');
+            $table->string('title')->nullable(); // مثل "المنزل"
+            $table->string('full_address');
 
-    $table->foreignId('city_id')->constrained('cities')->onDelete('restrict'); // المدينة من جدول المحافظات
+            $table->foreignId('city_id')->constrained('cities')->onDelete('restrict'); // المدينة من جدول المحافظات
 
-    $table->string('state')->nullable();
-    $table->string('postal_code')->nullable();
-    $table->string('country')->default('Jordan');
+            $table->string('state')->nullable();
+            $table->string('postal_code')->nullable();
+            $table->string('country')->default('Jordan');
 
-    $table->decimal('latitude', 10, 7)->nullable();
-    $table->decimal('longitude', 10, 7)->nullable();
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
 
-    $table->timestamps();
-});
-
-
+            $table->timestamps();
+        });
     }
 
     /**

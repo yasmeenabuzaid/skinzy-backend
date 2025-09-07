@@ -9,20 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-  public function up(): void
-{
-    Schema::table('products', function (Blueprint $table) {
-        $table->unsignedBigInteger('brand_id')->nullable();
-        $table->foreign('brand_id')->references('id')->on('brands')->onDelete('set null');
-    });
-}
+    public function up(): void
+    {
+        Schema::table('products', function (Blueprint $table) {
+            $table->unsignedBigInteger('brand_id')->nullable();
+            $table->foreign('brand_id')->references('id')->on('brands')->onDelete('set null');
+        });
+    }
 
-public function down(): void
-{
-    Schema::table('products', function (Blueprint $table) {
-        $table->dropForeign(['brand_id']);
-        $table->dropColumn('brand_id');
-    });
-}
+    public function down(): void
+    {
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropForeign(['brand_id']);
+            $table->dropColumn('brand_id');
+        });
+    }
 
 };

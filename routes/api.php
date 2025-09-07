@@ -12,23 +12,22 @@ use App\Http\Controllers\Api\Auth\ApiRegisterController;
 use App\Http\Controllers\Api\Auth\ApiLoginController;
 
 Route::post('/products/import', [ProductController::class, 'import']);
-
 Route::post('/subcategories/import', [SubCategoryController::class, 'import']);
 Route::post('/categories/import', [CategoryController::class, 'import']);
 Route::post('/brands/import', [BrandController::class, 'import']);
 
 // ------------------------------------------------------
 Route::prefix('e-commerce/customer')->group(function () {
-    Route::post('/auth/register', [ApiRegisterController::class, 'register'])->middleware('throttle:5,1');
-    Route::post('/auth/login', [ApiLoginController::class, 'login'])->middleware('throttle:5,1');
-    Route::get('/products', [ProductController::class, 'index']);
-    Route::get('/products/subcategory/{subcategoryId}', [ProductController::class, 'getProductsBySubCategory']);
-    Route::get('/products/category/{CategoryId}', [CategoryController::class, 'productsByCategory']); // هذا المسار الجديد
+    Route::post('/auth/register', [ApiRegisterController::class, 'register'])->middleware('throttle:7,1');
+    Route::post('/auth/login', [ApiLoginController::class, 'login'])->middleware('throttle:7,1');
+    Route::get('/products', [ProductController::class, 'getProducts']);
+
+    // هذا المسار الجديد
     Route::get('/single-products/{id}', [ProductController::class, 'show']);
     Route::get('/categories', [CategoryController::class, 'index']);
-    Route::get('/products/brand/{brandId}', [ProductController::class, 'getProductsByBrand']);
-    Route::post('/auth/forgot-password', [ForgotPasswordController::class, 'forgotPassword'])->middleware('throttle:3,1');
-    Route::post('/auth/reset-password', [ForgotPasswordController::class, 'resetPassword'])->middleware('throttle:3,1');
+    Route::post('/auth/forgot-password', [ForgotPasswordController::class, 'forgotPassword'])->middleware('throttle:5,1');
+    Route::post('/auth/reset-password', [ForgotPasswordController::class, 'resetPassword'])->middleware('throttle:5,1');
+
     Route::get('/subcategories', [SubCategoryController::class, 'getWithSubcategories']);
     Route::get('/brands', [BrandController::class, 'index']);
     Route::get('/cities', [OrderController::class, 'getCities']);
@@ -37,6 +36,7 @@ Route::prefix('e-commerce/customer')->group(function () {
 Route::middleware('auth:sanctum')->prefix('e-commerce/customer')->group(function () {
     Route::post('/cart', [CartController::class, 'addToCart']);
     Route::get('/cart/count', [CartController::class, 'getCartCount']);
+
     Route::get('/cart', [CartController::class, 'getCart']);
 
     // check which one is correct

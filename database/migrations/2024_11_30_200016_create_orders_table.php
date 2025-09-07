@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
 
-
             $table->string('mobile', 13);
             $table->string('email')->nullable();
             $table->string('note')->nullable();
@@ -19,7 +18,7 @@ return new class extends Migration
             $table->decimal('total_price', 10, 2);
 
             $table->enum('payment_method', ['cash_on_delivery', 'stripe'])->default('cash_on_delivery');
-$table->foreignId('address_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('address_id')->nullable()->constrained()->onDelete('set null');
 
             $table->enum('shipping_method', ['home_delivery', 'pickup'])->default('home_delivery')->nullable();
 

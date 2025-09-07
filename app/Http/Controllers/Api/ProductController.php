@@ -1,60 +1,50 @@
 <?php
 
-// app/Http/Controllers/Api/ProductController.php
-
 namespace App\Http\Controllers\Api;
 use App\Imports\ProductsImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use ZipArchive;
-
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Support\Facades\Cache;
-
+use App\Http\Requests\GetProductsRequest;
 class ProductController extends Controller
 {
-    public function index()
+    public function getProducts(GetProductsRequest $request)
     {
-        $products = Cache::remember('products_index', 3600, function () {
-            return Product::with(['images', 'subCategory'])
+        $subcategoryId = $request->sub_category_id;
+        $brandId = $request->brand_id;
+        $categoryId    = $request->category_id;
+
+        // Fetch the products
+        $query = Product::select([
+                    'id', 'name', 'small_description', 'name_ar', 
+                    'small_description_ar', 'price', 'price_after_discount','type'
+                ])
                 ->where('type', 'main')
-                ->get();
-        });
+                ->with(['images:id,image,product_id']);
 
-        return response()->json($products);
-    }
-
-    public function getProductsBySubCategory($subcategoryId)
-    {
-        if (!$subcategoryId) {
-            return response()->json(['error' => 'subcategory_id parameter is required'], 400);
+        // Sort by subcategory if the sub_category_id send 
+        if ($subcategoryId) {
+            $query->where('sub_category_id', $subcategoryId);
         }
 
-        $products = Cache::remember("products_subcategory_{$subcategoryId}", 3600, function () use ($subcategoryId) {
-            return Product::with(['images', 'subCategory'])
-                ->where('sub_category_id', $subcategoryId)
-                ->where('isDelete', 0)
-                ->where('type', 'main')
-                ->get();
-        });
-
-        return response()->json($products);
-    }
-
-    public function getProductsByBrand($brandId)
-    {
-        if (!$brandId) {
-            return response()->json(['error' => 'brand_id parameter is required'], 400);
+        // Sort by brand if the brand_id send 
+        if ($brandId) {
+            $query->where('brand_id', $brandId);
         }
 
-        $products = Cache::remember("products_brand_{$brandId}", 3600, function () use ($brandId) {
-            return Product::with(['images', 'subCategory'])
-                ->where('brand_id', $brandId)
-                ->where('type', 'main')
-                ->get();
-        });
+        // Sort by category if the category_id send (by this relation: Product->subCategory->category)
+        if ($categoryId) {
+            $query->whereHas('subCategory', function ($q) use ($categoryId) {
+                $q->where('category_id', $categoryId);
+            });
+        }
+
+        //Pagination for the products
+        $products = $query->paginate(20);
 
         return response()->json($products);
     }
@@ -130,14 +120,5 @@ public function import(Request $request)
 
     return response()->json(['message' => 'Products imported successfully!'], 200);
 }
-
-
-
-
-
-
-
-
-
 
 }
