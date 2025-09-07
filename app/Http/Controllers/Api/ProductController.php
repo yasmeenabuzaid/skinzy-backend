@@ -8,7 +8,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use ZipArchive;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use Illuminate\Support\Facades\Cache;
 use App\Http\Requests\GetProductsRequest;
 class ProductController extends Controller
 {
@@ -24,7 +23,11 @@ class ProductController extends Controller
                     'small_description_ar', 'price', 'price_after_discount','type'
                 ])
                 ->where('type', 'main')
-                ->with(['images:id,image,product_id']);
+                ->with(['images' => function($q) {
+                    $q->select('id','image','product_id')
+                      ->orderBy('id')   
+                      ->limit(1);    
+                }]);
 
         // Sort by subcategory if the sub_category_id send 
         if ($subcategoryId) {
@@ -51,11 +54,10 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        $product = Cache::remember("product_show_{$id}", 3600, function () use ($id) {
             $product = Product::with([
                 'images', 'specifications', 'variations.images', 'variations.specifications',
                 'parentProduct.images', 'parentProduct.specifications', 'parentProduct.variations.images',
-                'parentProduct.variations.specifications', 'subCategory', 'brand',
+                'subCategory', 'brand',
             ])->where('id', $id)->first();
 
             if ($product && $product->type === 'variation' && $product->parentProduct) {
@@ -64,7 +66,6 @@ class ProductController extends Controller
             }
 
             return $product;
-        });
 
         if (!$product) {
             return response()->json(['message' => 'Product not found'], 404);
