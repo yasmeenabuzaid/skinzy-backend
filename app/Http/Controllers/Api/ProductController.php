@@ -20,14 +20,9 @@ class ProductController extends Controller
         // Fetch the products
         $query = Product::select([
                     'id', 'name', 'small_description', 'name_ar', 
-                    'small_description_ar', 'price', 'price_after_discount','type'
+                    'small_description_ar', 'price', 'price_after_discount'
                 ])
-                ->where('type', 'main')
-                ->with(['images' => function($q) {
-                    $q->select('id','image','product_id')
-                      ->orderBy('id')   
-                      ->limit(1);    
-                }]);
+                ->with(['firstImage:id,image,product_id']);
 
         // Sort by subcategory if the sub_category_id send 
         if ($subcategoryId) {
@@ -52,20 +47,20 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
+
     public function show($id)
     {
-            $product = Product::with([
-                'images', 'specifications', 'variations.images', 'variations.specifications',
-                'parentProduct.images', 'parentProduct.specifications', 'parentProduct.variations.images',
-                'subCategory', 'brand',
-            ])->where('id', $id)->first();
-
-            if ($product && $product->type === 'variation' && $product->parentProduct) {
-                $product->parent = $product->parentProduct;
-                $product->siblings = $product->parentProduct->variations->where('id', '!=', $product->id)->values();
-            }
-
-            return $product;
+        $product = Product::select([
+                'id', 'name', 'small_description','description','name_ar', 
+                'small_description_ar','description_ar','code', 'price', 'price_after_discount'
+            ])
+            ->with([
+            'images:id,image,product_id',
+            'specifications:id,key,key_ar,value,value_ar,product_id', 
+            'variations:id,variation_type,variation_value,code,product_id',
+            ])
+            ->where('id', $id)
+            ->first();
 
         if (!$product) {
             return response()->json(['message' => 'Product not found'], 404);

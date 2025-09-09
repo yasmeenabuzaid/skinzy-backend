@@ -6,18 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use App\Imports\CategoriesImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Cache::remember('categories_index', 3600 * 24, function () {
-            return Category::where('isDelete', false)->get();
+        $categories = Cache::remember('categories_index', 3600, function () {
+            return Category::select(['id', 'name', 'name_ar', 'image', 'isDelete'])
+                ->where('isDelete', false)->get();
         });
 
         return response()->json($categories);

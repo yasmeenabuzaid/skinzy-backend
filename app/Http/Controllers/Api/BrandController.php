@@ -3,17 +3,21 @@
 namespace App\Http\Controllers\Api;
 use App\Imports\BrandsImport;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use ZipArchive;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 class BrandController extends Controller
 {
     public function index()
     {
-        return response()->json(Brand::all());
+        $brands = Cache::remember('brands_index', 3600, function () {
+            return Brand::select(['id', 'name', 'image'])->get();
+        });
+
+        return response()->json($brands);    
     }
 
 

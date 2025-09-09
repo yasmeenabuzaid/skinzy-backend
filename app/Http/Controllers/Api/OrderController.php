@@ -14,17 +14,17 @@ use App\Models\Address;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\OrderDetail;
+use Illuminate\Support\Facades\Cache;
 
 class OrderController extends Controller
 {
     public function getCities()
     {
-        $cities = City::all(); // استخدام :: بدلاً من -> لأنها استاتيكية
+        $cities = Cache::remember('cities_index', 3600, function () {
+            return City::select(['id', 'name', 'delivery_fee', 'free_shipping_min'])->get();
+        });
 
-        return response()->json([
-            'success' => true,
-            'cities' => $cities
-        ]);
+        return response()->json($cities);    
     }
 
 
