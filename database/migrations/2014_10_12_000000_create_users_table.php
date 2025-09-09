@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->enum('role', ['user', 'manager'])->default('user');
 
-            $table->string('mobile');
+            $table->string('mobile')->nullable();
             $table->string('password');
             $table->boolean('isDelete')->default(false);
 

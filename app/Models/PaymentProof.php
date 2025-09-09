@@ -10,6 +10,7 @@ class PaymentProof extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'user_id',
         'order_id',
         'image',
@@ -24,6 +25,8 @@ class PaymentProof extends Model
         'details',
         'reviewed_by',
         'reviewed_at',
+        'created_at',
+        'updated_at',
     ];
 
     public function user()

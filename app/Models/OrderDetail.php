@@ -11,8 +11,17 @@ class OrderDetail extends Model
 
     protected $dates = ['deleted_at'];
 
-    protected $guarded  = [];
-
+    protected $fillable = [
+        'id',
+        'quantity',
+        'price',
+        'discount',
+        'total_price',
+        'order_id',
+        'product_id',
+        'created_at',
+        'updated_at',
+    ];
 
     public function order()
     {

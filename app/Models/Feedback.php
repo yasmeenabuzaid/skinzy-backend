@@ -12,10 +12,13 @@ class Feedback extends Model
     protected $table = 'feedback';
 
     protected $fillable = [
+        'id',
         'comment',
         'rating',
         'product_id',
-        'user_id'
+        'user_id',
+        'created_at',
+        'updated_at',
     ];
 
     public function product()

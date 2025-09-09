@@ -10,8 +10,21 @@ class Address extends Model
     use HasFactory;
 
 
-    protected $guarded  = [];
-
+    protected $fillable = [
+        'id',
+        'user_id',
+        'title',
+        'full_address',
+        'city_id',
+        'state',
+        'postal_code',
+        'country',
+        'latitude',
+        'longitude',
+        'created_at',
+        'updated_at',
+    ];
+    
     public function city()
     {
         return $this->belongsTo(City::class);

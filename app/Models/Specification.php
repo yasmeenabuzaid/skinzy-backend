@@ -10,11 +10,14 @@ class Specification extends Model
     use HasFactory;
 
     protected $fillable = [
-        'product_id',
+        'id',
         'key',
         'key_ar',
         'value',
         'value_ar',
+        'product_id',
+        'created_at',
+        'updated_at',
     ];
 
     public function product()

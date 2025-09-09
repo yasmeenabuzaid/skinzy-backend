@@ -12,7 +12,16 @@ class SubCategory extends Model
 
     protected $dates = ['deleted_at'];
 
-    protected $guarded  = [];
+    protected $fillable = [
+        'id',
+        'name',
+        'name_ar',
+        'category_id',
+        'isDelete',
+        'created_at',
+        'updated_at',
+    ];
+
 
     public function category()
     {
